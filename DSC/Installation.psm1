@@ -624,7 +624,11 @@ function  Enable-Rule
         
         [parameter(parametersetname="Disable")]
         [switch]
-        $No
+        $No,
+        
+        [parameter(parametersetname="DoNotStoreEvents")]
+        [switch]
+        $NoEventsSQL=$false
     )
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
@@ -648,6 +652,12 @@ function  Enable-Rule
     else
     {
         $_Rule | %{ Invoke-Command $switchStatus -ArgumentList $_,0 }
+    }
+
+    if($NoEventsSQL)
+    {
+        $_Rule.Properties["DoNotSaveEvents"].Value=1
+        $_Rule.Update()
     }
 
 }

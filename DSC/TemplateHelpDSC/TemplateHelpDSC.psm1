@@ -314,8 +314,8 @@ class InstallInTrust
 					$rulegroup2=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Windows*"}
 					Add-SiteToPolicy -SiteName "All workstations" -PolicyName "Windows/AD Security: full"
 					Enable-Policy -PolicyName "Windows/AD Security: full" -Yes
-					List-Rules -Group $rulegroup1 | %{Enable-Rule -RuleName $_.Name -Yes}
-					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes}
+					List-Rules -Group $rulegroup1 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
+					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 
