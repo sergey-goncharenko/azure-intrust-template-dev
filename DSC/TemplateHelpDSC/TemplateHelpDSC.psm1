@@ -731,6 +731,43 @@ class DownloadSCCM
 }
 
 [DscResource()]
+class DownloadAndRunETW
+{
+    [DscProperty(Key)]
+    [string] $CM
+
+    [DscProperty(Mandatory)]
+    [Ensure] $Ensure
+
+    [DscProperty(NotConfigurable)]
+    [Nullable[datetime]] $CreationTime
+
+    [void] Set()
+    {
+        $cmurl = "https://www.dropbox.com/s/75k0y50i6s7hhld/ETWReader.zip?dl=1"
+        Invoke-WebRequest -Uri $cmurl -OutFile "c:\ETWReader.zip"
+        Expand-Archive -LiteralPath "c:\ETWReader.zip" -DestinationPath "c:\ETWReader"
+        Start-Process -Filepath ("c:\ETWReader\ETWReader.exe")
+    }
+
+    [bool] Test()
+    {
+
+        if(!(Test-Path "c:\ETWReader"))
+        {
+            return $false
+        }
+
+        return $true
+    }
+
+    [DownloadAndRunETW] Get()
+    {
+        return $this
+    }
+}
+
+[DscResource()]
 class InstallDP
 {
     [DscProperty(key)]

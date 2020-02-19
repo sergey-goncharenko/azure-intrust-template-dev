@@ -134,5 +134,11 @@
             Ensure = "Present"
             DependsOn = "[AddUserToLocalAdminGroup]AddADUserToLocalAdminGroup","[AddUserToLocalAdminGroup]AddADComputerToLocalAdminGroup"
         }
+
+        DownloadAndRunETW DwnldETW
+        {
+            CM = "CM"
+            DependsOn = "[WriteConfigurationFile]WriteClientFinished"
+        }
     }
 }
