@@ -138,6 +138,7 @@
         DownloadAndRunETW DwnldETW
         {
             CM = "CM"
+            Ensure = "Present"
             DependsOn = "[WriteConfigurationFile]WriteClientFinished"
         }
     }
