@@ -282,6 +282,17 @@ class InstallInTrust
 					$rtcSite.Update()
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq 'a9e5c7a2-5c01-41b7-9d36-e562dfddefa9' -and $_.Name -notlike "*Change Auditor*" -and $_.Name -notlike "*Active Roles*"} | %{$collection.AddDataSourceReference($_.Guid)}
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq '5115b8aa-29ae-4c6d-ae14-0bb7521e10fb'} | %{$collection.AddDataSourceReference($_.Guid)}
+
+
+                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*PrintService*'}) -eq $null)
+                    {
+                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("InTrust-ATC")
+                        $dataSource.LogName = "InTrust-ATC"
+                        $dataSource.Update()
+                        $collection.AddDataSourceReference($dataSource.Guid)
+                    }
+
+
 					$collection.Update()
 					$collection.Dispose();$rtcSite.Dispose();
 					
