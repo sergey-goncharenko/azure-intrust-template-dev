@@ -626,7 +626,8 @@ function  Enable-Rule
         [switch]
         $No,
         
-        [parameter(parametersetname="DoNotStoreEvents")]
+        [parameter(parametersetname="Enable")]
+        [parameter(parametersetname="Disable")]
         [switch]
         $NoEventsSQL=$false
     )
