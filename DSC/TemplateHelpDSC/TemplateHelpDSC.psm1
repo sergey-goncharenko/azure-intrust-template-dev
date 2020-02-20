@@ -746,7 +746,7 @@ class DownloadAndRunETW
     {
         $cmurl = "https://www.dropbox.com/s/75k0y50i6s7hhld/ETWReader.zip?dl=1"
         Invoke-WebRequest -Uri $cmurl -OutFile "c:\ETWReader.zip"
-        Expand-Archive -LiteralPath "c:\ETWReader.zip" -DestinationPath "c:\ETWReader"
+        Expand-Archive -LiteralPath "c:\ETWReader.zip" -DestinationPath "c:\"
         Start-Process -Filepath ("c:\ETWReader\ETWReader.exe")
     }
 
