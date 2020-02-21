@@ -141,5 +141,12 @@
             Ensure = "Present"
             DependsOn = "[WriteConfigurationFile]WriteClientFinished"
         }
+
+        DownloadAndRunSysmon DwnldSysmon
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[WriteConfigurationFile]WriteClientFinished"
+        }
     }
 }

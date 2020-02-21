@@ -12,6 +12,7 @@ DscResourcesToExport = @(
     'WaitForConfigurationFile',
     'DelegateControl',
     'DownloadAndRunETW',
+    'DownloadAndRunSysmon',
     'AddBuiltinPermission',
     'InstallSCCM',
     'InstallDP',

@@ -292,6 +292,14 @@ class InstallInTrust
                         $collection.AddDataSourceReference($dataSource.Guid)
                     }
 
+                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*Sysmon*'}) -eq $null)
+                    {
+                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon")
+                        $dataSource.LogName = "Microsoft-Windows-Sysmon"
+                        $dataSource.Update()
+                        $collection.AddDataSourceReference($dataSource.Guid)
+                    }
+
 
 					$collection.Update()
 					$collection.Dispose();$rtcSite.Dispose();
@@ -773,6 +781,42 @@ class DownloadAndRunETW
     }
 
     [DownloadAndRunETW] Get()
+    {
+        return $this
+    }
+}
+
+class DownloadAndRunSysmon
+{
+    [DscProperty(Key)]
+    [string] $CM
+
+    [DscProperty(Mandatory)]
+    [Ensure] $Ensure
+
+    [DscProperty(NotConfigurable)]
+    [Nullable[datetime]] $CreationTime
+
+    [void] Set()
+    {
+        $cmurl = "https://live.sysinternals.com/Sysmon64.exe"
+        Invoke-WebRequest -Uri $cmurl -OutFile "c:\Sysmon64.exe"
+        #Expand-Archive -LiteralPath "c:\ETWReader.zip" -DestinationPath "c:\"
+        Start-Process -Filepath ("c:\ETWReader\ETWReader.exe") -ArgumentList ('-accepteula -i -n')
+    }
+
+    [bool] Test()
+    {
+
+        if(!(Test-Path "c:\Sysmon64.exe"))
+        {
+            return $false
+        }
+
+        return $true
+    }
+
+    [DownloadAndRunSysmon] Get()
     {
         return $this
     }
