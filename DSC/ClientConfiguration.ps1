@@ -146,7 +146,7 @@
         {
             CM = "CM"
             Ensure = "Present"
-            DependsOn = "[WriteConfigurationFile]WriteClientFinished"
+            DependsOn = "[DownloadAndRunETW]DwnldETW"
         }
     }
 }
