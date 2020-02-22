@@ -786,6 +786,7 @@ class DownloadAndRunETW
     }
 }
 
+[DscResource()]
 class DownloadAndRunSysmon
 {
     [DscProperty(Key)]
