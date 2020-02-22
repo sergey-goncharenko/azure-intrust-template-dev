@@ -142,11 +142,11 @@
             DependsOn = "[WriteConfigurationFile]WriteClientFinished"
         }
 
- #       DownloadAndRunSysmon DwnldSysmon
- #       {
- #           CM = "CM"
- #           Ensure = "Present"
- #           DependsOn = "[DownloadAndRunETW]DwnldETW"
- #       }
+        DownloadAndRunSysmon DwnldSysmon
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[DownloadAndRunETW]DwnldETW"
+        }
     }
 }
