@@ -147,7 +147,12 @@
             DependsOn = "[FileReadAccessShare]DomainSMBShare"
         }
 		
-
+        DownloadAndRunSysmon DwnldSysmon
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[FileReadAccessShare]DomainSMBShare"
+        }
 
  #       DelegateControl AddPS
  #       {

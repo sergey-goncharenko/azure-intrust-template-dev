@@ -156,14 +156,14 @@
         {
             Ensure = "Present"
             Role = "Server"
-			DependsOn = "[WriteConfigurationFile]WriteINTRFinished"
+			DependsOn = "[JoinDomain]JoinDomain"
         }
         xCredSSP Client
         {
             Ensure = "Present"
             Role = "Client"
             DelegateComputers = "*"
-			DependsOn = "[xCredSSP]Server"
+			DependsOn = "[JoinDomain]JoinDomain"
         }
 		
 		InstallInTrust InstallInTrustTask
@@ -176,6 +176,13 @@
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
             DependsOn = "[xCredSSP]Client"
+        }
+
+        DownloadAndRunSysmon DwnldSysmon
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[InstallInTrust]InstallInTrustTask"
         }
 		
 #		RegisterTaskScheduler InstallAndUpdateSCCM
