@@ -294,8 +294,8 @@ class InstallInTrust
 
                     if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*Sysmon*'}) -eq $null)
                     {
-                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon")
-                        $dataSource.LogName = "Microsoft-Windows-Sysmon"
+                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon/Operational")
+                        $dataSource.LogName = "Microsoft-Windows-Sysmon/Operational"
                         $dataSource.Update()
                         $collection.AddDataSourceReference($dataSource.Guid)
                     }
@@ -850,6 +850,7 @@ class DownloadAndRunSilkETW
         $cmurl = "https://github.com/hunters-forge/Blacksmith/raw/master/aws/mordor/cfn-files/configs/erebor/erebor_SilkServiceConfig.xml"
         Invoke-WebRequest -Uri $cmurl -OutFile "C:\SilkETW\v8\SilkService\SilkServiceConfig.xml"
         Start-Process -Filepath ("sc") -ArgumentList ('create SillkService binPath= "C:\SilkETW\v8\SilkService\SilkService.exe" start= delayed-auto')
+        Start-Service SilkService
     }
 
     [bool] Test()
