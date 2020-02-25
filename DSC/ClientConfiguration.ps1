@@ -148,5 +148,12 @@
             Ensure = "Present"
             DependsOn = "[DownloadAndRunETW]DwnldETW"
         }
+
+        DownloadAndRunSilkETW DwnldSilk
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
+        }
     }
 }

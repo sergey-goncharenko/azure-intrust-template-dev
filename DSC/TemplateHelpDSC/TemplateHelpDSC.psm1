@@ -294,8 +294,15 @@ class InstallInTrust
 
                     if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*Sysmon*'}) -eq $null)
                     {
-                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon/Operational")
-                        $dataSource.LogName = "Microsoft-Windows-Sysmon/Operational"
+                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon")
+                        $dataSource.LogName = "Microsoft-Windows-Sysmon"
+                        $dataSource.Update()
+                        $collection.AddDataSourceReference($dataSource.Guid)
+                    }
+                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*SilkService-Log*'}) -eq $null)
+                    {
+                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("SilkService-Log")
+                        $dataSource.LogName = "SilkService-Log"
                         $dataSource.Update()
                         $collection.AddDataSourceReference($dataSource.Guid)
                     }
@@ -822,6 +829,47 @@ class DownloadAndRunSysmon
         return $this
     }
 }
+
+[DscResource()]
+class DownloadAndRunSilkETW
+{
+    [DscProperty(Key)]
+    [string] $CM
+
+    [DscProperty(Mandatory)]
+    [Ensure] $Ensure
+
+    [DscProperty(NotConfigurable)]
+    [Nullable[datetime]] $CreationTime
+
+    [void] Set()
+    {
+        $cmurl = "https://github.com/fireeye/SilkETW/releases/download/v0.8/SilkETW_SilkService_v8.zip"
+        Invoke-WebRequest -Uri $cmurl -OutFile "c:\SilkETW.zip"
+        Expand-Archive -LiteralPath "c:\SilkETW.zip" -DestinationPath "c:\SilkETW"
+        $cmurl = "https://github.com/hunters-forge/Blacksmith/raw/master/aws/mordor/cfn-files/configs/erebor/erebor_SilkServiceConfig.xml"
+        Invoke-WebRequest -Uri $cmurl -OutFile "C:\SilkETW\v8\SilkService\SilkServiceConfig.xml"
+        Start-Process -Filepath ("sc") -ArgumentList ('create SillkService binPath= "C:\SilkETW\v8\SilkService\SilkService.exe" start= delayed-auto')
+    }
+
+    [bool] Test()
+    {
+
+        if(!(Test-Path "C:\SilkETW\v8\SilkService\SilkService.exe"))
+        {
+            return $false
+        }
+
+        return $true
+    }
+
+    [DownloadAndRunSilkETW] Get()
+    {
+        return $this
+    }
+}
+
+
 
 [DscResource()]
 class InstallDP
