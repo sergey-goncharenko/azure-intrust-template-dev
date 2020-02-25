@@ -294,8 +294,8 @@ class InstallInTrust
 
                     if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*Sysmon*'}) -eq $null)
                     {
-                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon")
-                        $dataSource.LogName = "Microsoft-Windows-Sysmon"
+                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("Microsoft-Windows-Sysmon/Operational")
+                        $dataSource.LogName = "Microsoft-Windows-Sysmon/Operational"
                         $dataSource.Update()
                         $collection.AddDataSourceReference($dataSource.Guid)
                     }
