@@ -855,7 +855,7 @@ class DownloadAndRunSilkETW
     [bool] Test()
     {
 
-        if(!(get-service "SilkService"))
+        if(!(get-service "SilkService" -ErrorAction SilentlyContinue))
         {
             return $false
         }
@@ -889,7 +889,7 @@ class StartSilkETW
     [bool] Test()
     {
 
-        if(!((get-service "SilkService").Status -eq "Running"))
+        if(!((get-service "SilkService" -ErrorAction SilentlyContinue).Status -eq "Running"))
         {
             return $false
         }
