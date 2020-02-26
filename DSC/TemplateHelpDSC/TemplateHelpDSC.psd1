@@ -14,6 +14,7 @@ DscResourcesToExport = @(
     'DownloadAndRunETW',
     'DownloadAndRunSysmon',
     'DownloadAndRunSilkETW',
+    'StartSilkETW',
     'AddBuiltinPermission',
     'InstallSCCM',
     'InstallDP',
