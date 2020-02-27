@@ -102,15 +102,15 @@
       "DC",
       "INTR",
       "Client",
-      "ClientLinux",
-      "PS"
+      "PS",
+      "ClientLinux"
     ],
     "vmname": [
       "DC01",
       "INTR01",
       "Cl01",
-      "Cl02",
-      "PS01"
+      "PS01",
+      "Cl02"
     ],
     "vmDiskType": [
       "Premium_LRS",
@@ -123,8 +123,8 @@
       "Standard_B2s",
       "Standard_B2s",
       "Standard_B2s",
-      "Standard_B2s",
-      "Standard_B2ms"
+      "Standard_B2ms",
+      "Standard_B2s"
     ],
     "imageReference": {
       "DC": {
@@ -145,16 +145,16 @@
         "sku": "19h1-pro",
         "version": "latest"
       },
-      "ClientLinux": {
-        "publisher": "RedHat",
-        "offer": "RHEL",
-        "sku": "7-RAW",
-        "version": "latest"
-      },
       "PS": {
         "publisher": "MicrosoftSQLServer",
         "offer": "SQL2017-WS2016",
         "sku": "Standard",
+        "version": "latest"
+      },
+      "ClientLinux": {
+        "publisher": "RedHat",
+        "offer": "RHEL",
+        "sku": "7-RAW",
         "version": "latest"
       }
     }
@@ -219,7 +219,7 @@
       "location": "[parameters('location')]",
       "copy": {
         "name": "vmcopy",
-        "count": 5
+        "count": 4
       },
       "dependsOn": [
         "[concat('Microsoft.Compute/virtualMachines/',toLower(parameters('prefix')),variables('vmname')[copyIndex()])]"
@@ -325,29 +325,7 @@
         "publicIpAllocationMethod": "[variables('networkSettings').publicIpAllocationMethod]"
       }
     },
-    {
-      "type": "Microsoft.Network/networkSecurityGroups",
-      "apiVersion": "2018-08-01",
-      "name": "[concat(toLower(parameters('prefix')), '-nsg')]",
-      "location": "[parameters('location')]",
-      "properties": {
-        "securityRules": [
-          {
-            "name": "[variables('securityGroupRule').name]",
-            "properties": {
-              "priority": "[variables('securityGroupRule').priority]",
-              "sourceAddressPrefix": "[variables('securityGroupRule').sourceAddressPrefix]",
-              "protocol": "[variables('securityGroupRule').protocol]",
-              "destinationPortRange": "[variables('securityGroupRule').destinationPortRange]",
-              "access": "[variables('securityGroupRule').access]",
-              "direction": "[variables('securityGroupRule').direction]",
-              "sourcePortRange": "[variables('securityGroupRule').sourcePortRange]",
-              "destinationAddressPrefix": "[variables('securityGroupRule').destinationAddressPrefix]"
-            }
-          }
-        ]
-      }
-    },
+
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-06-01",
@@ -360,7 +338,10 @@
         "osProfile": {
           "computerName": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[3]))]",
           "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminPassword": "[parameters('adminPassword')]",
+          "windowsConfiguration": {
+            "provisionVmAgent": "true"
+          }
         },
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')[3]]"
@@ -391,6 +372,29 @@
       }
     },
     {
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "apiVersion": "2018-08-01",
+      "name": "[concat(toLower(parameters('prefix')), '-nsg')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": [
+          {
+            "name": "[variables('securityGroupRule').name]",
+            "properties": {
+              "priority": "[variables('securityGroupRule').priority]",
+              "sourceAddressPrefix": "[variables('securityGroupRule').sourceAddressPrefix]",
+              "protocol": "[variables('securityGroupRule').protocol]",
+              "destinationPortRange": "[variables('securityGroupRule').destinationPortRange]",
+              "access": "[variables('securityGroupRule').access]",
+              "direction": "[variables('securityGroupRule').direction]",
+              "sourcePortRange": "[variables('securityGroupRule').sourcePortRange]",
+              "destinationAddressPrefix": "[variables('securityGroupRule').destinationAddressPrefix]"
+            }
+          }
+        ]
+      }
+    },
+    {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-06-01",
       "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[4]))]",
@@ -402,10 +406,7 @@
         "osProfile": {
           "computerName": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[4]))]",
           "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]",
-          "windowsConfiguration": {
-            "provisionVmAgent": "true"
-          }
+          "adminPassword": "[parameters('adminPassword')]"
         },
         "hardwareProfile": {
           "vmSize": "[variables('vmSize')[4]]"
