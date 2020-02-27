@@ -849,7 +849,7 @@ class DownloadAndRunSilkETW
         Expand-Archive -LiteralPath "c:\SilkETW.zip" -DestinationPath "c:\SilkETW"
         $cmurl = "https://github.com/hunters-forge/Blacksmith/raw/master/aws/mordor/cfn-files/configs/erebor/erebor_SilkServiceConfig.xml"
         Invoke-WebRequest -Uri $cmurl -OutFile "C:\SilkETW\v8\SilkService\SilkServiceConfig.xml"
-        Start-Process -Filepath ("sc") -ArgumentList ('create SilkService binPath= "C:\SilkETW\v8\SilkService\SilkService.exe" start= delayed-auto')
+        Start-Process -Filepath ("sc") -ArgumentList ('create SilkService type= share binPath= "C:\SilkETW\v8\SilkService\SilkService.exe" start= delayed-auto')
     }
 
     [bool] Test()
