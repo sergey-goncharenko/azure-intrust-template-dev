@@ -883,7 +883,9 @@ class StartSilkETW
 
     [void] Set()
     {
-        start-service "SilkService"
+        $query = "Name = 'SilkService'"
+        $services = Get-WmiObject win32_service -Filter $query
+        $services.StartService()
     }
 
     [bool] Test()
