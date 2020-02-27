@@ -389,7 +389,7 @@
           }
         }
       }
-    }
+    },
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-06-01",
