@@ -123,6 +123,8 @@
             DependsOn = "[File]ShareFolder"
         }
 
+
+
         OpenFirewallPortForSCCM OpenFirewall
         {
             Name = "INTR"
@@ -183,6 +185,14 @@
             CM = "CM"
             Ensure = "Present"
             DependsOn = "[InstallInTrust]InstallInTrustTask"
+        }
+
+        FileReadAccessShare IntrustSMBShare
+        {
+            Name   = "Agent"
+            Path = "C:\IntrFull\Agent"
+            Account = "Everyone"
+            DependsOn = "[DownloadSCCM]DownLoadSCCM"
         }
 		
 #		RegisterTaskScheduler InstallAndUpdateSCCM

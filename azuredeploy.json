@@ -435,6 +435,28 @@
           }
         }
       }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(concat(toLower(parameters('prefix')),toLower(variables('vmname')[4])),'/configuressh')]",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('location')]",
+      "dependsOn": [
+        "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[4]))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[Uri(parameters('_artifactsLocation'),concat("configureLinuxVM.sh",parameters('_artifactsLocationSasToken')))]"
+          ],
+          "commandToExecute": "bash configureLinuxVM.sh",
+          "protectedSettings": {}
+        }
+      }
     }
   ],
   "outputs": {
