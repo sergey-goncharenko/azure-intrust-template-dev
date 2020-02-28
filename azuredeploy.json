@@ -453,7 +453,7 @@
           "fileUris": [
             "[Uri(parameters('_artifactsLocation'),concat('DSC/configureLinuxVM.sh',parameters('_artifactsLocationSasToken')))]"
           ],
-          "commandToExecute": "bash configureLinuxVM.sh"
+          "commandToExecute": "[concat('bash configureLinuxVM.sh -a ',parameters('adminUsername'),' -p ',parameters('adminPassword'))]"
         }
       }
     }
