@@ -453,8 +453,7 @@
           "fileUris": [
             "[Uri(parameters('_artifactsLocation'),concat('configureLinuxVM.sh',parameters('_artifactsLocationSasToken')))]"
           ],
-          "commandToExecute": "bash configureLinuxVM.sh",
-          "protectedSettings": {}
+          "commandToExecute": "bash configureLinuxVM.sh"
         }
       }
     }
