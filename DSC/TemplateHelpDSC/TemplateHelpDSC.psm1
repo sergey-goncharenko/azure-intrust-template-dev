@@ -346,14 +346,16 @@ class InstallInTrust
 						$notification.Update()
 					}
 					$rulegroup1=$cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Windows*"}
-					$rulegroup2=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Windows*" -or $_.Name -like "Linux*"}
+					$rulegroup2=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Windows*"}
                     $rulegroup3=$cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Redhat*"}					
+   					$rulegroup4=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Linux*"}
                     Add-SiteToPolicy -SiteName "All workstations" -PolicyName "Windows/AD Security: full"
 					Enable-Policy -PolicyName "Windows/AD Security: full" -Yes
                     Enable-Policy -PolicyName "Redhat Linux: security" -Yes
 					List-Rules -Group $rulegroup1 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
 					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
                     List-Rules -Group $rulegroup3 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
+                    List-Rules -Group $rulegroup4 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 

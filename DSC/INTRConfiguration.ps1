@@ -154,12 +154,12 @@
             DependsOn = "[AddUserToLocalAdminGroup]AddADUserToLocalAdminGroup","[AddUserToLocalAdminGroup]AddADComputerToLocalAdminGroup"
         }
 		
-		xCredSSP Server
-        {
-            Ensure = "Present"
-            Role = "Server"
-			DependsOn = "[JoinDomain]JoinDomain"
-        }
+#		xCredSSP Server
+#        {
+#            Ensure = "Present"
+#            Role = "Server"
+#			DependsOn = "[JoinDomain]JoinDomain"
+#        }
         xCredSSP Client
         {
             Ensure = "Present"
