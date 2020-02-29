@@ -154,19 +154,19 @@
             DependsOn = "[AddUserToLocalAdminGroup]AddADUserToLocalAdminGroup","[AddUserToLocalAdminGroup]AddADComputerToLocalAdminGroup"
         }
 		
-#		xCredSSP Server
-#        {
-#            Ensure = "Present"
-#            Role = "Server"
-#			DependsOn = "[JoinDomain]JoinDomain"
-#        }
-        xCredSSP Client
+		xCredSSP Server
         {
             Ensure = "Present"
-            Role = "Client"
-            DelegateComputers = "*"
+            Role = "Server"
 			DependsOn = "[JoinDomain]JoinDomain"
         }
+#        xCredSSP Client
+#        {
+#            Ensure = "Present"
+#            Role = "Client"
+#            DelegateComputers = "*"
+#			DependsOn = "[JoinDomain]JoinDomain"
+#        }
 		
 		InstallInTrust InstallInTrustTask
         {
