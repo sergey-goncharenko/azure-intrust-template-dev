@@ -319,7 +319,16 @@ class InstallInTrust
 
 					$site.AddDomain([Guid]::NewGuid(),"contoso.com",$false)
 					$site.Update() 
+
+					$site = $cfgBrowser.Configuration.Sites.ListSites() | ? {$_.Name -like "Redhat*"}
+
+					$site.AddComputer([Guid]::NewGuid(),"sgazlabcl02.internal.cloudapp.net",$false)
+					$site.Update() 
 					
+                    $task=$cfgBrowser.Configuration.Children["ADCTasks"].Children | ?{$_.Name -like "Redhat Linux Daily*"}
+                    $task.Properties["Enabled"].Value=1
+                    $task.Update()
+
 					$_Policies = $cfgBrowser.Configuration.Children["ITRTPolicies"].Children
 
 					foreach($_Policy in $_Policies)
@@ -337,11 +346,14 @@ class InstallInTrust
 						$notification.Update()
 					}
 					$rulegroup1=$cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Windows*"}
-					$rulegroup2=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Windows*"}
-					Add-SiteToPolicy -SiteName "All workstations" -PolicyName "Windows/AD Security: full"
+					$rulegroup2=($cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Advanced*"}).Children | ?{$_.Name -like "Windows*" -or $_.Name -like "Linux*"}
+                    $rulegroup3=$cfgBrowser.Configuration.Children["ITRTProcessingRuleGroups"].Children | ?{$_.Name -like "Redhat*"}					
+                    Add-SiteToPolicy -SiteName "All workstations" -PolicyName "Windows/AD Security: full"
 					Enable-Policy -PolicyName "Windows/AD Security: full" -Yes
+                    Enable-Policy -PolicyName "Redhat Linux: security" -Yes
 					List-Rules -Group $rulegroup1 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
 					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
+                    List-Rules -Group $rulegroup3 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 

@@ -13,6 +13,7 @@
 #---BEGIN VARIABLES---
 AZ_ACCOUNT_NAME=''
 AZ_ACCOUNT_PWD=''
+AZ_SERVER_NAME=''
 
 
  function usage()
@@ -29,7 +30,7 @@ function log()
 }
 
 #---PARSE AND VALIDATE PARAMETERS---
-if [ $# -ne 4 ]; then
+if [ $# -ne 6 ]; then
     log "ERROR:Wrong number of arguments specified. Parameters received $#. Terminating the script."
     usage
     exit 1
@@ -40,6 +41,9 @@ while getopts :a:p: optname; do
   case $optname in
     a) # Azure Private Storage Account Name- SSH Keys
       AZ_ACCOUNT_NAME=${OPTARG}
+      ;;
+    i) # AIntrust Server name
+      AZ_SERVER_NAME=${OPTARG}
       ;;
     p) # Azure Private Storage Account Key - SSH Keys
       AZ_ACCOUNT_PWD=${OPTARG}
@@ -61,8 +65,10 @@ function ConfigureInTrustAgent()
     yum install libuuid.i686 -y --setopt=protected_multilib=false 
     yum install glibc.i686 -y --setopt=protected_multilib=false
     yum install samba-client -y
-    smbget smb://${AZ_ACCOUNT_NAME}:${AZ_ACCOUNT_PWD}@10.0.0.5/Agent/linux_intel/adcscm_package.linux_intel.sh
-    #./adcscm_package.linux_intel.sh
+    smbget smb://${AZ_ACCOUNT_NAME}:${AZ_ACCOUNT_PWD}@${AZ_SERVER_NAME}/Agent/linux_intel/adcscm_package.linux_intel.sh
+    mkdir /home/intrust
+    ./adcscm_package.linux_intel.sh /home/intrust
+    /home/intrust/adcscm -add ${AZ_SERVER_NAME} 900 ${AZ_ACCOUNT_PWD}
 }
 
 ConfigureInTrustAgent
