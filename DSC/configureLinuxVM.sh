@@ -36,13 +36,13 @@ if [ $# -ne 6 ]; then
     exit 1
 fi
 
-while getopts :a:p: optname; do
+while getopts :a:p:i: optname; do
     log "INFO:Option $optname set with value ${OPTARG}"
   case $optname in
     a) # Azure Private Storage Account Name- SSH Keys
       AZ_ACCOUNT_NAME=${OPTARG}
       ;;
-    i) # AIntrust Server name
+    i) # Intrust Server name
       AZ_SERVER_NAME=${OPTARG}
       ;;
     p) # Azure Private Storage Account Key - SSH Keys
