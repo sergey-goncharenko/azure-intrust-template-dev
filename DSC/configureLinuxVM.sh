@@ -62,7 +62,7 @@ function ConfigureInTrustAgent()
     yum install glibc.i686 -y --setopt=protected_multilib=false
     yum install samba-client -y
     smbget smb://${AZ_ACCOUNT_NAME}:${AZ_ACCOUNT_PWD}@10.0.0.5/Agent/linux_intel/adcscm_package.linux_intel.sh
-    ./adcscm_package.linux_intel.sh
+    #./adcscm_package.linux_intel.sh
 }
 
 ConfigureInTrustAgent
