@@ -177,7 +177,7 @@
 			PSName = $PSName
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
-            DependsOn = "[xCredSSP]Client"
+            DependsOn = "[xCredSSP]Server"
         }
 
         DownloadAndRunSysmon DwnldSysmon
