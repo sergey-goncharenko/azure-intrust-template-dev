@@ -158,15 +158,16 @@
         {
             Ensure = "Present"
             Role = "Server"
+            SuppressReboot = $true
 			DependsOn = "[JoinDomain]JoinDomain"
         }
-#        xCredSSP Client
-#        {
-#            Ensure = "Present"
-#            Role = "Client"
-#            DelegateComputers = "*"
-#			DependsOn = "[JoinDomain]JoinDomain"
-#        }
+        xCredSSP Client
+        {
+            Ensure = "Present"
+            Role = "Client"
+            DelegateComputers = "*"
+			DependsOn = "[JoinDomain]JoinDomain"
+        }
 		
 		InstallInTrust InstallInTrustTask
         {
