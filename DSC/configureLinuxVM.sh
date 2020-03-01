@@ -68,6 +68,7 @@ function ConfigureInTrustAgent()
     smbget smb://${AZ_ACCOUNT_NAME}:${AZ_ACCOUNT_PWD}@${AZ_SERVER_NAME}/Agent/linux_intel/adcscm_package.linux_intel.sh
     mkdir /home/intrust
     ./adcscm_package.linux_intel.sh /home/intrust
+    sleep 5m
     /home/intrust/adcscm -add ${AZ_SERVER_NAME} 900 ${AZ_ACCOUNT_PWD}
 }
 
