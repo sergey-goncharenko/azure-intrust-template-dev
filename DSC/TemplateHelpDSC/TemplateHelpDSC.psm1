@@ -263,7 +263,7 @@ class InstallInTrust
 			Install-InTrustLicense -LicenseFullName "$cmsourcepath\License.asc"
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			    $cmd >> $StatusPath
-			(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace 'TaskScheduler=40','#TaskScheduler=40'	
+			(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40'	
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
 					[Reflection.Assembly]::LoadFrom($cfgBrowserDll.FullName) | Out-Null
