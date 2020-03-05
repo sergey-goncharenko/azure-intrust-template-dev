@@ -263,7 +263,7 @@ class InstallInTrust
 			Install-InTrustLicense -LicenseFullName "$cmsourcepath\License.asc"
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			    $cmd >> $StatusPath
-				
+			(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace 'TaskScheduler=40','#TaskScheduler=40'	
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
 					[Reflection.Assembly]::LoadFrom($cfgBrowserDll.FullName) | Out-Null
@@ -299,13 +299,13 @@ class InstallInTrust
                         $dataSource.Update()
                         $collection.AddDataSourceReference($dataSource.Guid)
                     }
-                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*SilkService-Log*'}) -eq $null)
-                    {
-                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("SilkService-Log")
-                        $dataSource.LogName = "SilkService-Log"
-                        $dataSource.Update()
-                        $collection.AddDataSourceReference($dataSource.Guid)
-                    }
+#                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*SilkService-Log*'}) -eq $null)
+#                    {
+#                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("SilkService-Log")
+#                        $dataSource.LogName = "SilkService-Log"
+#                        $dataSource.Update()
+#                        $collection.AddDataSourceReference($dataSource.Guid)
+#                    }
 
 
 					$collection.Update()
@@ -328,6 +328,10 @@ class InstallInTrust
                     $task=$cfgBrowser.Configuration.Children["ADCTasks"].Children | ?{$_.Name -like "Redhat Linux Daily*"}
                     $task.Properties["Enabled"].Value=1
                     $task.Update()
+                    $adctask=$cfgBrowser.Configuration.Children["ITGCTasks"].Children | ?{$_.Properties["Guid"].Value -eq '{26F70CB0-BD7F-4498-8C1E-AADCEACB15E3}'}
+                    $adctask.Properties["Policy"].Value='{B76D9201-6ECA-451A-9823-404B86EC2780}'
+                    $adctask.Properties["Storages"].Value.Remove($adctask.Properties["Storages"].Value.Item(2),$false)
+                    $adctask.Update()
 
 					$_Policies = $cfgBrowser.Configuration.Children["ITRTPolicies"].Children
 
