@@ -20,6 +20,8 @@
 		[String]$IntrLicUrl,
 		[Parameter(Mandatory)]
 		[String]$GPOURL,
+		[Parameter(Mandatory)]
+		[String]$ITSSURL,
         [Parameter(Mandatory)]
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
@@ -73,13 +75,24 @@
 #            DependsOn = "[InstallFeatureForSCCM]InstallFeature"
 #        }
 
-        DownloadSCCM DownLoadSCCM
+#        DownloadSCCM DownLoadSCCM
+#        {
+#            CM = $CM
+#            ExtPath = $LogPath
+#			IntrUrl= $IntrUrl
+#			IntrUpdateUrl= $IntrUpdateUrl
+#			IntrLicUrl= $IntrLicUrl
+#            Ensure = "Present"
+#            DependsOn = "[InstallFeatureForSCCM]InstallFeature"
+#        }
+
+        DownloadITSS DownLoadITSS
         {
-            CM = $CM
+            CM = "ITSS"
             ExtPath = $LogPath
-			IntrUrl= $IntrUrl
-			IntrUpdateUrl= $IntrUpdateUrl
-			IntrLicUrl= $IntrLicUrl
+			ITSSUrl= $ITSSUrl
+			#ITSSUpdateUrl= $IntrUpdateUrl
+			#ITSSLicUrl= $IntrLicUrl
             Ensure = "Present"
             DependsOn = "[InstallFeatureForSCCM]InstallFeature"
         }
@@ -88,7 +101,7 @@
         {
             DNSIPAddress = $DNSIPAddress
             Ensure = "Present"
-            DependsOn = "[DownloadSCCM]DownLoadSCCM"
+            DependsOn = "[DownloadITSS]DownLoadITSS"
         }
 
         WaitForDomainReady WaitForDomain

@@ -51,6 +51,12 @@
       "minLength": 8,
       "metadata": {
         "description": "URL to download and deploy GPO in domain"
+      },
+    "ITSSURL": {
+      "type": "string",
+      "minLength": 8,
+      "metadata": {
+        "description": "URL to download ITSS"
       }
     },
     "_artifactsLocation": {
@@ -242,6 +248,7 @@
 			"IntrUpdateUrl": "[parameters('IntrUpdate')]",
 			"IntrLicUrl": "[parameters('IntrLic')]",
 			"GPOURL": "[parameters('GPOURL')]",
+            "ITSSURL": "[parameters('ITSSURL')]",
             "DNSIPAddress": "[concat(variables('networkSettings').virtualMachinesIPAddress,add(int('0'),int('4')))]",
             "AdminCreds": {
               "UserName": "[parameters('adminUsername')]",

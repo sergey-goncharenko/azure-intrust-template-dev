@@ -775,6 +775,72 @@ class DownloadSCCM
 }
 
 [DscResource()]
+class DownloadITSS
+{
+    [DscProperty(Key)]
+    [string] $CM
+
+    [DscProperty(Mandatory)]
+    [string] $ExtPath
+	
+	[DscProperty(Key)]
+    [string] $ITSSUrl
+
+	[DscProperty(Key)]
+    [string] $ITSSUpdateUrl
+
+	[DscProperty(Key)]
+    [string] $ITSSLicUrl
+
+    [DscProperty(Mandatory)]
+    [Ensure] $Ensure
+
+    [DscProperty(NotConfigurable)]
+    [Nullable[datetime]] $CreationTime
+
+    [void] Set()
+    {
+        $_CM = $this.CM
+        $_ExtPath = $this.ExtPath
+        $cmpath = "c:\$_CM.exe"
+        $cmsourcepath = "c:\$_CM"
+
+        Write-Verbose "Downloading ITSS installation source..."
+        $cmurl = $this.ITSSUrl
+		$cmlicurl = $this.ITSSLicUrl
+		$cmupdateurl = $this.ITSSUpdateUrl
+        Invoke-WebRequest -Uri $cmurl -OutFile $cmpath
+        if(!(Test-Path $cmsourcepath))
+        {
+            Start-Process -Filepath ($cmpath) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
+        }
+		$cmupdatepath = "$cmsourcepath\Update.exe"
+		#Invoke-WebRequest -Uri $cmupdateurl -OutFile $cmupdatepath
+		$cmlicpath = "$cmsourcepath\License.asc"
+		#Invoke-WebRequest -Uri $cmlicurl -OutFile $cmlicpath
+    }
+
+    [bool] Test()
+    {
+        $_CM = $this.CM
+        $cmpath = "c:\$_CM.exe"
+        $cmsourcepath = "c:\$_CM"
+        if(!(Test-Path $cmpath))
+        {
+            return $false
+        }
+
+        return $true
+    }
+
+    [DownloadITSS] Get()
+    {
+        return $this
+    }
+}
+
+
+[DscResource()]
 class DownloadAndRunETW
 {
     [DscProperty(Key)]
