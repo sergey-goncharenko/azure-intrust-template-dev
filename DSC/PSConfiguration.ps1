@@ -91,8 +91,8 @@
             CM = "ITSS"
             ExtPath = $LogPath
 			ITSSUrl= $ITSSUrl
-			#ITSSUpdateUrl= $IntrUpdateUrl
-			#ITSSLicUrl= $IntrLicUrl
+			ITSSUpdateUrl= ""#$IntrUpdateUrl
+			ITSSLicUrl= ""#$IntrLicUrl
             Ensure = "Present"
             DependsOn = "[InstallFeatureForSCCM]InstallFeature"
         }
