@@ -159,26 +159,27 @@
             DependsOn = "[WaitForConfigurationFile]DelegateControl"
         }
 
-        FileReadAccessShare CMSourceSMBShare
-        {
-            Name   = $CM
-            Path =  "c:\$CM"
-            Account = $DCComputerAccount
-            DependsOn = "[ChangeSQLServicesAccount]ChangeToLocalSystem"
-        }
+ #       FileReadAccessShare CMSourceSMBShare
+ #       {
+ #           Name   = $CM
+ #           Path =  "c:\$CM"
+ #           Account = $DCComputerAccount
+ #           DependsOn = "[ChangeSQLServicesAccount]ChangeToLocalSystem"
+ #       }
 		
 		xCredSSP Server
         {
             Ensure = "Present"
             Role = "Server"
-			DependsOn = "[FileReadAccessShare]CMSourceSMBShare"
+            SuppressReboot = $true
+			DependsOn = "[ChangeSQLServicesAccount]ChangeToLocalSystem"
         }
         xCredSSP Client
         {
             Ensure = "Present"
             Role = "Client"
             DelegateComputers = "$PSName, localhost, $INTRName"
-			DependsOn = "[FileReadAccessShare]CMSourceSMBShare"
+			DependsOn = "[ChangeSQLServicesAccount]ChangeToLocalSystem"
         }
 
         RegisterTaskScheduler InstallAndUpdateSCCM
