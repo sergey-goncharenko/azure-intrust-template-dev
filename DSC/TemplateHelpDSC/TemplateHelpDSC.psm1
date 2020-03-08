@@ -802,7 +802,7 @@ class DownloadITSS
     {
         $_CM = $this.CM
         $_ExtPath = $this.ExtPath
-        $cmpath = "c:\$_CM.exe"
+        $cmpath = "c:\$_CM.zip"
         $cmsourcepath = "c:\$_CM"
 
         Write-Verbose "Downloading ITSS installation source..."
@@ -812,7 +812,8 @@ class DownloadITSS
         Invoke-WebRequest -Uri $cmurl -OutFile $cmpath
         if(!(Test-Path $cmsourcepath))
         {
-            Start-Process -Filepath ($cmpath) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
+            Expand-Archive -LiteralPath $cmpath -DestinationPath "c:\"
+            #Start-Process -Filepath ($cmpath) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
         }
 		$cmupdatepath = "$cmsourcepath\Update.exe"
 		#Invoke-WebRequest -Uri $cmupdateurl -OutFile $cmupdatepath
