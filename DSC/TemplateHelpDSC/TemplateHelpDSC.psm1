@@ -812,8 +812,10 @@ class DownloadITSS
         Invoke-WebRequest -Uri $cmurl -OutFile $cmpath
         if(!(Test-Path $cmsourcepath))
         {
-            Expand-Archive -LiteralPath $cmpath -DestinationPath $cmsourcepath -Force
-            #Start-Process -Filepath ($cmpath) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
+            Expand-Archive -LiteralPath $cmpath -DestinationPath ($cmsourcepath + '2') -Force
+            $itsspath=$cmsourcepath + '2\Web\Full'
+            $itssprogname=(ls $itsspath).Name
+            Start-Process -Filepath ($itsspath + $itssprogname) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
         }
 		$cmupdatepath = "$cmsourcepath\Update.exe"
 		#Invoke-WebRequest -Uri $cmupdateurl -OutFile $cmupdatepath
