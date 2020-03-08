@@ -812,7 +812,7 @@ class DownloadITSS
         Invoke-WebRequest -Uri $cmurl -OutFile $cmpath
         if(!(Test-Path $cmsourcepath))
         {
-            Expand-Archive -LiteralPath $cmpath -DestinationPath "c:\"
+            Expand-Archive -LiteralPath $cmpath -DestinationPath $cmsourcepath -Force
             #Start-Process -Filepath ($cmpath) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
         }
 		$cmupdatepath = "$cmsourcepath\Update.exe"
@@ -824,7 +824,7 @@ class DownloadITSS
     [bool] Test()
     {
         $_CM = $this.CM
-        $cmpath = "c:\$_CM.exe"
+        $cmpath = "c:\$_CM.zip"
         $cmsourcepath = "c:\$_CM"
         if(!(Test-Path $cmpath))
         {
