@@ -815,7 +815,7 @@ class DownloadITSS
             Expand-Archive -LiteralPath $cmpath -DestinationPath ($cmsourcepath + '2') -Force
             $itsspath=$cmsourcepath + '2\Web\Full'
             $itssprogname=(ls $itsspath).Name
-            Start-Process -Filepath ($itsspath + $itssprogname) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
+            Start-Process -Filepath ($itsspath + '\' + $itssprogname) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
         }
 		$cmupdatepath = "$cmsourcepath\Update.exe"
 		#Invoke-WebRequest -Uri $cmupdateurl -OutFile $cmupdatepath
