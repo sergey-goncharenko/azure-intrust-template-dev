@@ -40,6 +40,9 @@
     
     [System.Management.Automation.PSCredential]$DomainCreds = New-Object System.Management.Automation.PSCredential ("${DomainName}\$($Admincreds.UserName)", $Admincreds.Password)
 
+    $admname = $Admincreds.UserName
+	$admpwd=$Admincreds.GetNetworkCredential().password
+
     Node LOCALHOST
     {
         LocalConfigurationManager
@@ -196,6 +199,18 @@
             CM = "CM"
             Ensure = "Present"
             DependsOn = "[xCredSSP]Client"
+        }
+
+        InstallITSS InstallITSSTask
+        {
+            CM = "ITSS"
+            Adminpass = $admpwd
+			DomainName = $DomainName
+            Credential = $DomainCreds
+			PSName = $PSName
+			ScriptPath = $PSScriptRoot
+            Ensure = "Present"
+            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
         }
     }
 }

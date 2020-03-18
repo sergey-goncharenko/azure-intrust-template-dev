@@ -185,6 +185,84 @@ class InstallAndConfigWSUS
 }
 
 [DscResource()]
+class InstallITSS
+{
+    [DscProperty(Key)]
+    [string] $CM
+	
+	[DscProperty(Key)]
+    [string] $AdminPass
+	
+    [DscProperty(Key)]
+    [string] $DomainName
+
+    [DscProperty(Mandatory)]
+    [System.Management.Automation.PSCredential] $Credential
+
+	
+	[DscProperty(Key)]
+    [string] $PSName
+	
+	[DscProperty(Key)]
+    [string] $ScriptPath
+
+    [DscProperty(Mandatory)]
+    [Ensure] $Ensure
+
+    [DscProperty(NotConfigurable)]
+    [Nullable[datetime]] $CreationTime
+
+    [void] Set()
+    {
+		$_CM = $this.CM
+		$_SP=$this.ScriptPath
+		$usernm=$this.Credential.UserName
+		$PScreds=$this.Credential
+		$admpass=$this.AdminPass
+		$sqlsrv=$this.PSName
+        $cmpath = "c:\$_CM.exe"
+        $cmsourcepath = "c:\$_CM"
+		$creds=$usernm
+
+		$output = Invoke-Command -ScriptBlock { 
+			param($admpass,$sqlsrv,$creds,$cmsourcepath,$_SP)
+			$StatusPath = "$cmsourcepath\Installcmd.txt"
+            "Started..." >> $StatusPath
+			#${DomainName}\$($creds.UserName)
+			Start-Process -Filepath ("$cmsourcepath\Components\ITSearchSuite.exe") -ArgumentList (' /install /qb /log "$cmsourcepath\install.log" ADC_USERNAME=$creds ADC_PASSWORD=$admpass IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER=$sqlsrv ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME=$creds ADC_SQL_PASSWD=$sqlsrv IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT="443" ALLOWUSAGEDATACOLLECTION="False" INSTALL_ADC=#1') -wait
+			$cmd=' /install /qb /log "$cmsourcepath\install.log" ADC_USERNAME=$creds ADC_PASSWORD=$admpass IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER=$sqlsrv ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME=$creds ADC_SQL_PASSWD=$sqlsrv IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT="443" ALLOWUSAGEDATACOLLECTION="False" INSTALL_ADC=#1'
+			$StatusPath = "$cmsourcepath\Installcmd.txt"
+			$cmd >> $StatusPath
+
+		} -ArgumentList $admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
+        Write-output $output
+
+		
+		
+    }
+
+    [bool] Test()
+    {
+        $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)
+        $subKey =  $key.OpenSubKey("SOFTWARE\Quest\IT Security Search")
+        if($subKey)
+        {
+            if($subKey.GetValue('DllPath') -ne $null)
+            {
+                return $true
+            }
+        }
+        return $false
+    }
+
+    [InstallITSS] Get()
+    {
+        return $this
+    }
+    
+}
+
+[DscResource()]
 class InstallInTrust
 {
     [DscProperty(Key)]
