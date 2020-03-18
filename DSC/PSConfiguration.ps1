@@ -208,6 +208,7 @@
 			DomainName = $DomainName
             Credential = $DomainCreds
 			PSName = $PSName
+            INTRName = $INTRName
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
             DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"

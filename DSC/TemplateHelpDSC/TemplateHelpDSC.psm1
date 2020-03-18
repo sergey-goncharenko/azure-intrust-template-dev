@@ -202,6 +202,9 @@ class InstallITSS
 	
 	[DscProperty(Key)]
     [string] $PSName
+
+    [DscProperty(Key)]
+    [string] $INTRName
 	
 	[DscProperty(Key)]
     [string] $ScriptPath
@@ -220,6 +223,7 @@ class InstallITSS
 		$PScreds=$this.Credential
 		$admpass=$this.AdminPass
 		$sqlsrv=$this.PSName
+        $intrsrv=$this.INTRName
         $cmpath = "c:\$_CM.exe"
         $cmsourcepath = "c:\$_CM"
 		$creds=$usernm
@@ -234,9 +238,20 @@ class InstallITSS
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			$cmd >> $StatusPath
 
+ 
+
 		} -ArgumentList $admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 
+        $props = @{
+            'server'=$intrsrv
+            'user'=$usernm
+            'password'=$admpass
+            'selectedReps'=@(
+                                    (New-Object -TypeName PSObject -Property @{'Name'='Default InTrust Audit Repository'})
+                            )
+        }
+        "C:\Program Files\Quest\IT Security Search\Scripts\Set-ItssConnectorSettings.ps1" -ComputerName $sqlsrv -ConnectorId 'InTrust' -Properties $props
 		
 		
     }
