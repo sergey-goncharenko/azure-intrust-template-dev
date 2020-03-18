@@ -251,7 +251,8 @@ class InstallITSS
                                     (New-Object -TypeName PSObject -Property @{'Name'='Default InTrust Audit Repository'})
                             )
         }
-        "C:\Program Files\Quest\IT Security Search\Scripts\Set-ItssConnectorSettings.ps1" -ComputerName $sqlsrv -ConnectorId 'InTrust' -Properties $props
+        cd "C:\Program Files\Quest\IT Security Search\Scripts\"
+        ./Set-ItssConnectorSettings.ps1 -ComputerName $sqlsrv -ConnectorId 'InTrust' -Properties $props
 		
 		
     }
