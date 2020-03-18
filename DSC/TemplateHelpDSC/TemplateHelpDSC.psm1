@@ -228,8 +228,6 @@ class InstallITSS
         $cmsourcepath = "c:\$_CM"
 		$creds=$usernm
 
-		$output = Invoke-Command -ScriptBlock { 
-			param($admpass,$sqlsrv,$creds,$cmsourcepath,$_SP)
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
             "Started..." >> $StatusPath
 			#${DomainName}\$($creds.UserName)
@@ -238,10 +236,6 @@ class InstallITSS
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			$cmd >> $StatusPath
 
- 
-
-		} -ArgumentList $admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
-        Write-output $output
 
         $props = @{
             'server'=$intrsrv
