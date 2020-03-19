@@ -231,8 +231,10 @@ class InstallITSS
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
             "Started..." >> $StatusPath
 			#${DomainName}\$($creds.UserName)
-			Start-Process -Filepath ("$cmsourcepath\Components\ITSearchSuite.exe") -verb Runasuser -Credential $PScreds -ArgumentList (' /install /quiet /log "'+$cmsourcepath+'\install.log" ADC_USERNAME='+$creds+' ADC_PASSWORD='+$admpass+' IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER='+$sqlsrv+' ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME='+$creds+' ADC_SQL_PASSWD='+$admpass+' IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT="443" ALLOWUSAGEDATACOLLECTION="False" INSTALL_ADC=#1') -wait
-			$cmd=' /install /quiet /log "'+$cmsourcepath+'\install.log" ADC_USERNAME='+$creds+' ADC_PASSWORD='+$admpass+' IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER='+$sqlsrv+' ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME='+$creds+' ADC_SQL_PASSWD='+$admpass+' IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT="443" ALLOWUSAGEDATACOLLECTION="False" INSTALL_ADC=#1'
+            $arglist=' /install /quiet /log "'+$cmsourcepath+'\install.log" ADC_USERNAME='+$creds+' ADC_PASSWORD='+$admpass+' IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER='+$sqlsrv+' ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME='+$creds+' ADC_SQL_PASSWD='+$admpass+' IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT="443" ALLOWUSAGEDATACOLLECTION="False" INSTALL_ADC=#1'
+            $filepath="$cmsourcepath\Components\ITSearchSuite.exe"
+			Start-Process powershell -Credential $PScreds -ArgumentList '-noprofile -command &{start-process -Filepath $filepath -ArgumentList $arglist -verb Runas}' -wait
+			$cmd='-noprofile -command &{start-process -Filepath $filepath -ArgumentList $arglist -verb Runas}'
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			$cmd >> $StatusPath
 
