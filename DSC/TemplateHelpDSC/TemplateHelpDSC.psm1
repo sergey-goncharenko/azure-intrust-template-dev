@@ -233,9 +233,10 @@ class InstallITSS
 			#${DomainName}\$($creds.UserName)
             $arglist=' /install /quiet /log "'+$cmsourcepath+'\install.log" ADC_USERNAME='+$creds+' ADC_PASSWORD='+$admpass+' IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER='+$sqlsrv+' ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME='+$creds+' ADC_SQL_PASSWD='+$admpass+' IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT="443" ALLOWUSAGEDATACOLLECTION="False" INSTALL_ADC=#1'
             $filepath="$cmsourcepath\Components\ITSearchSuite.exe"
-            $command=" -noprofile -command &{start-process -Filepath '"+$filepath+"' -ArgumentList '"+$arglist+"' -verb Runas -wait}"
-			Start-Process powershell -Credential $PScreds -ArgumentList "$command" -wait
-			$cmd="-noprofile -command &{start-process -Filepath '"+$filepath+"' -ArgumentList '"+$arglist+"' -verb Runas -wait}"
+            $command0="& {start-process -Filepath '"+$filepath+"' -ArgumentList '"+$arglist+"' -verb Runas -wait}"
+            $command=' -noprofile -command "'+$command0+'"'
+			Start-Process powershell -Credential $PScreds -wait -ArgumentList '$command' 
+			$cmd=$command
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			$cmd >> $StatusPath
 
