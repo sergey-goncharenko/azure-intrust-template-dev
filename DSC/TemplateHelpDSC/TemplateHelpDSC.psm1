@@ -238,9 +238,13 @@ class InstallITSS
             $ps_script=$filepath+" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1"
             $StatusPath = "$cmsourcepath\Installcmd.ps1"
             $ps_script >> $StatusPath
-			Start-Process powershell -Credential $PScreds -wait -ArgumentList (" -command `"start-process powershell -wait -ArgumentList ' -File "+$StatusPath+"'`"")
+			#Start-Process powershell -Credential $PScreds -wait -ArgumentList (" -command `"start-process powershell -wait -ArgumentList ' -File "+$StatusPath+"'`"")
             #Start-Process $filepath -Credential $PScreds -LoadUserProfile -wait -ArgumentList (" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1")
-
+            $output = Invoke-Command -ScriptBlock { 
+                param($instpsmpath)
+                Start-Process powershell -wait -verb runas -ArgumentList ("-File "+$instpsmpath)
+		    } -ArgumentList $StatusPath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+            Write-output $output
 			$cmd=(" -command 'start-process powershell -verb runas -wait -ArgumentList `" -File "+$StatusPath+"`"'")
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			$cmd >> $StatusPath
