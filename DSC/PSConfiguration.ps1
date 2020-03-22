@@ -181,8 +181,8 @@
         {
             Ensure = "Present"
             Role = "Client"
-            DelegateComputers = "$PSName, localhost, $INTRName"
-			DependsOn = "[ChangeSQLServicesAccount]ChangeToLocalSystem"
+            DelegateComputers = "*"
+			DependsOn = "[xCredSSP]Server"
         }
 
         RegisterTaskScheduler InstallAndUpdateSCCM
