@@ -245,7 +245,7 @@ class InstallITSS
                 Start-Process powershell -wait -verb runas -ArgumentList ("-File "+$instpsmpath)
 
                 $props = @{
-                    'server'=$intrsrv
+                    'server'="localhost"
                     'user'=$usernm
                     'password'=$admpass
                     'selectedReps'=@(
@@ -269,10 +269,10 @@ class InstallITSS
                 $url="https://localhost/api/1.0/settings"
                 $settings = Invoke-RestMethod -Method Get -Uri $url -UseDefaultCredentials -ContentType 'application/json'
                 $connectors = $settings.connectors
-                $connectors.PSObject.Properties.Remove($ConnectorId)
+                $connectors.PSObject.Properties.Remove('InTrust')
 
                 $parameters = New-Object -TypeName PSObject -Property $props
-                $newConnector = New-Object -TypeName PSObject -Property @{'parameters'=$props}
+                $newConnector = New-Object -TypeName PSObject -Property @{'parameters'=$parameters}
 
                 Add-Member -InputObject $connectors -MemberType NoteProperty -Name 'InTrust' -Value $newConnector
 
