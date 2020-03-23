@@ -151,24 +151,24 @@
             DependsOn = "[DownloadAndRunETW]DwnldETW"
         }
 
-        DownloadAndRunSilkETW DwnldSilk
-        {
-            CM = "CM"
-            Ensure = "Present"
-            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
-        }
-        Environment Path
-        {
-            Name = "Path"
-            Path = $true
-            Value = "C:\SilkETW\v8\SilkService\"
-            DependsOn = "[DownloadAndRunSilkETW]DwnldSilk"
-        }
-        StartSilkETW StartSilk
-        {
-            CM = "CM"
-            Ensure = "Present"
-            DependsOn = "[Environment]Path"
-        }
+#        DownloadAndRunSilkETW DwnldSilk
+#        {
+#            CM = "CM"
+#            Ensure = "Present"
+#            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
+#        }
+#        Environment Path
+#        {
+#            Name = "Path"
+#            Path = $true
+#            Value = "C:\SilkETW\v8\SilkService\"
+#            DependsOn = "[DownloadAndRunSilkETW]DwnldSilk"
+#        }
+#        StartSilkETW StartSilk
+#        {
+#            CM = "CM"
+#            Ensure = "Present"
+#            DependsOn = "[Environment]Path"
+#        }
     }
 }

@@ -252,8 +252,33 @@ class InstallITSS
                                             (New-Object -TypeName PSObject -Property @{'Name'='Default InTrust Audit Repository'})
                                     )
                 }
-                cd "C:\Program Files\Quest\IT Security Search\Scripts\"
-                ./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
+                #cd "C:\Program Files\Quest\IT Security Search\Scripts\"
+                
+                add-type @"
+    using System.Net;
+    using System.Security.Cryptography.X509Certificates;
+    public class TrustAllCertsPolicy : ICertificatePolicy {
+        public bool CheckValidationResult(
+            ServicePoint srvPoint, X509Certificate certificate,
+            WebRequest request, int certificateProblem) {
+            return true;
+        }
+    }
+"@
+                [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+                $url="https://localhost/api/1.0/settings"
+                $settings = Invoke-RestMethod -Method Get -Uri $url -UseDefaultCredentials -ContentType 'application/json'
+                $connectors = $settings.connectors
+                $connectors.PSObject.Properties.Remove($ConnectorId)
+
+                $parameters = New-Object -TypeName PSObject -Property $props
+                $newConnector = New-Object -TypeName PSObject -Property @{'parameters'=$props}
+
+                Add-Member -InputObject $connectors -MemberType NoteProperty -Name 'InTrust' -Value $newConnector
+
+                $json = ConvertTo-Json -InputObject $settings -Depth 10
+                Invoke-RestMethod -Method Put -Uri $url -UseDefaultCredentials -Body $json
+                #./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
 
 
 		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
