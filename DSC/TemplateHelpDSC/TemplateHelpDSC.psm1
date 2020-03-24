@@ -244,8 +244,13 @@ class InstallITSS
                 param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
                 Start-Process powershell -wait -verb runas -ArgumentList ("-File "+$instpsmpath)
 
-                $props = @{
-                    'server'="localhost"
+    	    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+            Write-output $output
+
+		    $output = Invoke-Command -ScriptBlock { 
+                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
+                 $props = @{
+                    'server'=$intrsrv
                     'user'=$usernm
                     'password'=$admpass
                     'selectedReps'=@(
@@ -273,7 +278,7 @@ class InstallITSS
                 $StatusPath = "$cmsourcepath\Installcmd.txt"
                 $connectors >> $StatusPath
                 $parameters = New-Object -TypeName PSObject -Property $props
-                $newConnector = New-Object -TypeName PSObject -Property @{'parameters'=$parameters}
+                $newConnector = New-Object -TypeName PSObject -Property @{'active'='true';'parameters'=$parameters}
 
                 Add-Member -InputObject $connectors -MemberType NoteProperty -Name 'InTrust' -Value $newConnector
 
@@ -283,20 +288,13 @@ class InstallITSS
 
 
 		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
-            Write-output $output
-			$cmd=(" -command 'start-process powershell -verb runas -wait -ArgumentList `" -File "+$StatusPath+"`"'")
-			$StatusPath = "$cmsourcepath\Installcmd.txt"
-			$cmd >> $StatusPath
-
-
-
-		
+  
 		
     }
 
     [bool] Test()
     {
-        $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Registry32)
+        $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Default)
         $subKey =  $key.OpenSubKey("SOFTWARE\Quest\IT Security Search")
         if($subKey)
         {
