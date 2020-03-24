@@ -241,7 +241,7 @@ class InstallITSS
 			#Start-Process powershell -Credential $PScreds -wait -ArgumentList (" -command `"start-process powershell -wait -ArgumentList ' -File "+$StatusPath+"'`"")
             #Start-Process $filepath -Credential $PScreds -LoadUserProfile -wait -ArgumentList (" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1")
             $output = Invoke-Command -ScriptBlock { 
-                param($instpsmpath,$intrsrv,$usernm,$admpass)
+                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
                 Start-Process powershell -wait -verb runas -ArgumentList ("-File "+$instpsmpath)
 
                 $props = @{
@@ -282,7 +282,7 @@ class InstallITSS
                 #./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
 
 
-		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
             Write-output $output
 			$cmd=(" -command 'start-process powershell -verb runas -wait -ArgumentList `" -File "+$StatusPath+"`"'")
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
