@@ -270,6 +270,7 @@ class InstallITSS
                 $settings = Invoke-RestMethod -Method Get -Uri $url -UseDefaultCredentials -ContentType 'application/json'
                 $connectors = $settings.connectors
                 $connectors.PSObject.Properties.Remove('InTrust')
+                $StatusPath = "$cmsourcepath\Installcmd.txt"
                 $settings >> $StatusPath
                 $parameters = New-Object -TypeName PSObject -Property $props
                 $newConnector = New-Object -TypeName PSObject -Property @{'parameters'=$parameters}
