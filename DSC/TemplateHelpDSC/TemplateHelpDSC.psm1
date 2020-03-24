@@ -271,7 +271,7 @@ class InstallITSS
                 $connectors = $settings.connectors
                 $connectors.PSObject.Properties.Remove('InTrust')
                 $StatusPath = "$cmsourcepath\Installcmd.txt"
-                $settings >> $StatusPath
+                $connectors >> $StatusPath
                 $parameters = New-Object -TypeName PSObject -Property $props
                 $newConnector = New-Object -TypeName PSObject -Property @{'parameters'=$parameters}
 
