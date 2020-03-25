@@ -313,6 +313,137 @@ class InstallITSS
     
 }
 
+
+[DscResource()]
+class InstallITSSUpdate
+{
+    [DscProperty(Key)]
+    [string] $CM
+	
+	[DscProperty(Key)]
+    [string] $AdminPass
+	
+    [DscProperty(Key)]
+    [string] $DomainName
+
+    [DscProperty(Mandatory)]
+    [System.Management.Automation.PSCredential] $Credential
+
+	
+	[DscProperty(Key)]
+    [string] $PSName
+
+    [DscProperty(Key)]
+    [string] $INTRName
+	
+	[DscProperty(Key)]
+    [string] $ScriptPath
+
+    [DscProperty(Mandatory)]
+    [Ensure] $Ensure
+
+    [DscProperty(NotConfigurable)]
+    [Nullable[datetime]] $CreationTime
+
+    [void] Set()
+    {
+		$_CM = $this.CM
+		$_SP=$this.ScriptPath
+		$usernm=$this.Credential.UserName
+		$PScreds=$this.Credential
+		$admpass=$this.AdminPass
+		$sqlsrv=$this.PSName
+        $intrsrv=$this.INTRName
+        $cmpath = "c:\$_CM.exe"
+        $cmsourcepath = "c:\$_CM"
+		$creds=$usernm
+
+			$StatusPath = "$cmsourcepath\Installcmd.txt"
+            "Started..." >> $StatusPath
+			#${DomainName}\$($creds.UserName)
+            $arglist=' /install /quiet /log `"'+$cmsourcepath+'\install.log`" ADC_USERNAME='+$creds+' ADC_PASSWORD='+$admpass+' IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER='+$sqlsrv+' ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME='+$creds+' ADC_SQL_PASSWD='+$admpass+' IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1'
+            $filepath="$cmsourcepath\Components\ITSearchSuite.exe"
+            $command0="& {start-process -Filepath '"+$filepath+"' -ArgumentList (`""+$arglist+"`") -verb Runas -wait}"
+            $command=" -noprofile -command `""+$command0+"`""
+            $ps_script=$filepath+" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1"
+            $StatusPath = "$cmsourcepath\Installcmd.ps1"
+            $ps_script >> $StatusPath
+			#Start-Process powershell -Credential $PScreds -wait -ArgumentList (" -command `"start-process powershell -wait -ArgumentList ' -File "+$StatusPath+"'`"")
+            #Start-Process $filepath -Credential $PScreds -LoadUserProfile -wait -ArgumentList (" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1")
+            $output = Invoke-Command -ScriptBlock { 
+                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
+                Start-Process powershell -wait -verb runas -ArgumentList ("-File "+$instpsmpath)
+
+    	    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+            Write-output $output
+
+		    $output = Invoke-Command -ScriptBlock { 
+                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
+                 $props = @{
+                    'server'=$intrsrv
+                    'user'=$usernm
+                    'password'=$admpass
+                    'selectedReps'=@(
+                                            (New-Object -TypeName PSObject -Property @{'Name'='Default InTrust Audit Repository'})
+                                    )
+                }
+                #cd "C:\Program Files\Quest\IT Security Search\Scripts\"
+                
+                add-type @"
+    using System.Net;
+    using System.Security.Cryptography.X509Certificates;
+    public class TrustAllCertsPolicy : ICertificatePolicy {
+        public bool CheckValidationResult(
+            ServicePoint srvPoint, X509Certificate certificate,
+            WebRequest request, int certificateProblem) {
+            return true;
+        }
+    }
+"@
+                [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+                $url="https://localhost/api/1.0/settings"
+                $settings = Invoke-RestMethod -Method Get -Uri $url -UseDefaultCredentials -ContentType 'application/json'
+                $connectors = $settings.connectors
+                $connectors.PSObject.Properties.Remove('InTrust')
+                $StatusPath = "$cmsourcepath\Installcmd.txt"
+                $connectors >> $StatusPath
+                $parameters = New-Object -TypeName PSObject -Property $props
+                $newConnector = New-Object -TypeName PSObject -Property @{'active'='true';'parameters'=$parameters}
+
+                Add-Member -InputObject $connectors -MemberType NoteProperty -Name 'InTrust' -Value $newConnector
+
+                $json = ConvertTo-Json -InputObject $settings -Depth 10
+                Invoke-RestMethod -Method Put -Uri $url -UseDefaultCredentials -Body $json
+                #./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
+
+
+		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+  
+		
+    }
+
+    [bool] Test()
+    {
+        $key = [Microsoft.Win32.RegistryKey]::OpenBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine, [Microsoft.Win32.RegistryView]::Default)
+        $subKey =  $key.OpenSubKey("SOFTWARE\Quest\IT Security Search")
+        if($subKey)
+        {
+            if($subKey.GetValue('DllPath') -ne $null)
+            {
+                return $true
+            }
+        }
+        return $false
+    }
+
+    [InstallITSSUpdate] Get()
+    {
+        return $this
+    }
+    
+}
+
+
 [DscResource()]
 class InstallInTrust
 {
@@ -933,12 +1064,15 @@ class DownloadITSS
         $_ExtPath = $this.ExtPath
         $cmpath = "c:\$_CM.zip"
         $cmsourcepath = "c:\$_CM"
+        $_ITSSUpdateUrl=$this.ITSSUpdateUrl
 
         Write-Verbose "Downloading ITSS installation source..."
         $cmurl = $this.ITSSUrl
 		$cmlicurl = $this.ITSSLicUrl
 		$cmupdateurl = $this.ITSSUpdateUrl
         Invoke-WebRequest -Uri $cmurl -OutFile $cmpath
+
+
         if(!(Test-Path $cmsourcepath))
         {
             Expand-Archive -LiteralPath $cmpath -DestinationPath ($cmsourcepath + '2') -Force
@@ -946,10 +1080,13 @@ class DownloadITSS
             $itssprogname=(ls $itsspath).Name
             Start-Process -Filepath ($itsspath + '\' + $itssprogname) -ArgumentList ('-y -o"' + $cmsourcepath + '"') -wait
         }
-		$cmupdatepath = "$cmsourcepath\Update.exe"
-		#Invoke-WebRequest -Uri $cmupdateurl -OutFile $cmupdatepath
-		$cmlicpath = "$cmsourcepath\License.asc"
-		#Invoke-WebRequest -Uri $cmlicurl -OutFile $cmlicpath
+
+        if($_ITSSUpdateUrl)
+        {
+            Invoke-WebRequest -Uri $_ITSSUpdateUrl -OutFile $cmsourcepath+"_Update.exe"
+            Start-Process -Filepath ($cmsourcepath +"_Update.exe") -ArgumentList ('-y -o"' + $cmsourcepath + '_U"') -wait
+        }
+
     }
 
     [bool] Test()
@@ -970,6 +1107,8 @@ class DownloadITSS
         return $this
     }
 }
+
+
 
 
 [DscResource()]
