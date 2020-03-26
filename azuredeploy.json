@@ -60,6 +60,13 @@
         "description": "URL to download ITSS"
       }
     },
+    "ITSSUpdateURL": {
+      "type": "string",
+      "minLength": 8,
+      "metadata": {
+        "description": "URL to download ITSS Update"
+      }
+    },
     "_artifactsLocation": {
       "type": "string",
       "metadata": {
@@ -250,6 +257,7 @@
 			"IntrLicUrl": "[parameters('IntrLic')]",
 			"GPOURL": "[parameters('GPOURL')]",
             "ITSSURL": "[parameters('ITSSURL')]",
+            "ITSSUpdateURL": "[parameters('ITSSUpdateURL')]",
             "DNSIPAddress": "[concat(variables('networkSettings').virtualMachinesIPAddress,add(int('0'),int('4')))]",
             "AdminCreds": {
               "UserName": "[parameters('adminUsername')]",
