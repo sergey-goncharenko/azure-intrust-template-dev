@@ -1083,8 +1083,9 @@ class DownloadITSS
 
         if($_ITSSUpdateUrl)
         {
-            Invoke-WebRequest -Uri $_ITSSUpdateUrl -OutFile $cmsourcepath+"_Update.exe"
-            Start-Process -Filepath ($cmsourcepath +"_Update.exe") -ArgumentList ('-y -o"' + $cmsourcepath + '_U"') -wait
+            $updatefile=$cmsourcepath+'_Update.exe'
+            Invoke-WebRequest -Uri $_ITSSUpdateUrl -OutFile $updatefile
+            Start-Process -Filepath ($updatefile) -ArgumentList ('-y -o"' + $cmsourcepath + '_U"') -wait
         }
 
     }
