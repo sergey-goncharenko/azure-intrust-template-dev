@@ -20,8 +20,10 @@
 		[String]$IntrLicUrl,
         [Parameter(Mandatory)]
 		[String]$GPOURL,
-		[Parameter(Mandatory)]
+        [Parameter(Mandatory)]
 		[String]$ITSSURL,
+		[Parameter(Mandatory)]
+        [String]$ITSSUpdateURL,
         [Parameter(Mandatory)]
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]

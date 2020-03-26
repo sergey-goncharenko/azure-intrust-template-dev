@@ -23,6 +23,8 @@
 		[Parameter(Mandatory)]
 		[String]$ITSSURL,
         [Parameter(Mandatory)]
+        [String]$ITSSUpdateURL,
+        [Parameter(Mandatory)]
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Admincreds
@@ -94,7 +96,7 @@
             CM = "ITSS"
             ExtPath = $LogPath
 			ITSSUrl= $ITSSUrl
-			ITSSUpdateUrl= $IntrUpdateUrl
+			ITSSUpdateUrl= $ITSSUpdateUrl
 			ITSSLicUrl= ""#$IntrLicUrl
             Ensure = "Present"
             DependsOn = "[InstallFeatureForSCCM]InstallFeature"

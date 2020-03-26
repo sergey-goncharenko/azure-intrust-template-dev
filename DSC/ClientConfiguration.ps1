@@ -22,6 +22,8 @@
 		[String]$GPOURL,
 		[Parameter(Mandatory)]
 		[String]$ITSSURL,
+		[Parameter(Mandatory)]
+        [String]$ITSSUpdateURL,
         [Parameter(Mandatory)]
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
