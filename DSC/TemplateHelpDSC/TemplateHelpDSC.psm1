@@ -286,7 +286,7 @@ class InstallITSS
                 Invoke-RestMethod -Method Put -Uri $url -UseDefaultCredentials -Body $json
                 #./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
 
-                ls cert:\LocalMachine\My | ?{$_.Issuer -eq "CN="+$sqlsrv} | export-certificate - FilePath "$cmsourcepath\itss_cert.cer"
+                ls cert:\LocalMachine\My | ?{$_.Issuer -eq "CN="+$sqlsrv} | export-certificate -FilePath "$cmsourcepath\itss_cert.cer"
                 Import-Certificate -FilePath "$cmsourcepath\itss_cert.cer" -CertStoreLocation Cert:\LocalMachine\Root
 
 		    } -ArgumentList $StatusPath,$intrsrv,$sqlsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
