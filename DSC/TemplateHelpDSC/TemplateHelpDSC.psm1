@@ -248,7 +248,7 @@ class InstallITSS
             Write-output $output
 
 		    $output = Invoke-Command -ScriptBlock { 
-                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
+                param($instpsmpath,$intrsrv,$sqlsrv,$usernm,$admpass,$cmsourcepath)
                  $props = @{
                     'server'=$intrsrv
                     'user'=$usernm
@@ -286,8 +286,10 @@ class InstallITSS
                 Invoke-RestMethod -Method Put -Uri $url -UseDefaultCredentials -Body $json
                 #./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
 
+                ls cert:\LocalMachine\My | ?{$_.Issuer -eq "CN="+$sqlsrv} | export-certificate - FilePath "$cmsourcepath\itss_cert.cer"
+                Import-Certificate -FilePath "$cmsourcepath\itss_cert.cer" -CertStoreLocation Cert:\LocalMachine\Root
 
-		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+		    } -ArgumentList $StatusPath,$intrsrv,$sqlsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
   
 		
     }
@@ -354,70 +356,17 @@ class InstallITSSUpdate
 		$admpass=$this.AdminPass
 		$sqlsrv=$this.PSName
         $intrsrv=$this.INTRName
-        $cmpath = "c:\$_CM.exe"
+
         $cmsourcepath = "c:\$_CM"
 		$creds=$usernm
 
-			$StatusPath = "$cmsourcepath\Installcmd.txt"
-            "Started..." >> $StatusPath
-			#${DomainName}\$($creds.UserName)
-            $arglist=' /install /quiet /log `"'+$cmsourcepath+'\install.log`" ADC_USERNAME='+$creds+' ADC_PASSWORD='+$admpass+' IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER='+$sqlsrv+' ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME='+$creds+' ADC_SQL_PASSWD='+$admpass+' IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1'
-            $filepath="$cmsourcepath\Components\ITSearchSuite.exe"
-            $command0="& {start-process -Filepath '"+$filepath+"' -ArgumentList (`""+$arglist+"`") -verb Runas -wait}"
-            $command=" -noprofile -command `""+$command0+"`""
-            $ps_script=$filepath+" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1"
-            $StatusPath = "$cmsourcepath\Installcmd.ps1"
-            $ps_script >> $StatusPath
-			#Start-Process powershell -Credential $PScreds -wait -ArgumentList (" -command `"start-process powershell -wait -ArgumentList ' -File "+$StatusPath+"'`"")
-            #Start-Process $filepath -Credential $PScreds -LoadUserProfile -wait -ArgumentList (" /install /quiet /log "+$cmsourcepath+"\install.log ADC_USERNAME="+$creds+" ADC_PASSWORD="+$admpass+" IT_SQL_SETTINGS_INITIALIZED=1 ADC_SQL_SERVER="+$sqlsrv+" ADC_SQL_DB_NAME=ITSS_AdcCfg ADC_SQL_TYPE=1 ADC_SQL_USERNAME="+$creds+" ADC_SQL_PASSWD="+$admpass+" IACCEPTSQLNCLILICENSETERMS=YES SIP_OPTIN=#0 MMWEBUI_PORT=`"443`" ALLOWUSAGEDATACOLLECTION=`"False`" INSTALL_ADC=#1")
-            $output = Invoke-Command -ScriptBlock { 
-                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
-                Start-Process powershell -wait -verb runas -ArgumentList ("-File "+$instpsmpath)
+        $output = Invoke-Command -ScriptBlock { 
+        param($cmsourcepath)
+        (ls $cmsourcepath) | %{Start-Process msiexec.exe -Wait -ArgumentList ('/I '+$cmsourcepath+'\'+$_.Name+' /quiet')}
 
-    	    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
-            Write-output $output
+    	} -ArgumentList $cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
+        Write-output $output
 
-		    $output = Invoke-Command -ScriptBlock { 
-                param($instpsmpath,$intrsrv,$usernm,$admpass,$cmsourcepath)
-                 $props = @{
-                    'server'=$intrsrv
-                    'user'=$usernm
-                    'password'=$admpass
-                    'selectedReps'=@(
-                                            (New-Object -TypeName PSObject -Property @{'Name'='Default InTrust Audit Repository'})
-                                    )
-                }
-                #cd "C:\Program Files\Quest\IT Security Search\Scripts\"
-                
-                add-type @"
-    using System.Net;
-    using System.Security.Cryptography.X509Certificates;
-    public class TrustAllCertsPolicy : ICertificatePolicy {
-        public bool CheckValidationResult(
-            ServicePoint srvPoint, X509Certificate certificate,
-            WebRequest request, int certificateProblem) {
-            return true;
-        }
-    }
-"@
-                [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
-                $url="https://localhost/api/1.0/settings"
-                $settings = Invoke-RestMethod -Method Get -Uri $url -UseDefaultCredentials -ContentType 'application/json'
-                $connectors = $settings.connectors
-                $connectors.PSObject.Properties.Remove('InTrust')
-                $StatusPath = "$cmsourcepath\Installcmd.txt"
-                $connectors >> $StatusPath
-                $parameters = New-Object -TypeName PSObject -Property $props
-                $newConnector = New-Object -TypeName PSObject -Property @{'active'='true';'parameters'=$parameters}
-
-                Add-Member -InputObject $connectors -MemberType NoteProperty -Name 'InTrust' -Value $newConnector
-
-                $json = ConvertTo-Json -InputObject $settings -Depth 10
-                Invoke-RestMethod -Method Put -Uri $url -UseDefaultCredentials -Body $json
-                #./Set-ItssConnectorSettings.ps1 -ComputerName localhost -ConnectorId 'InTrust' -Properties $props
-
-
-		    } -ArgumentList $StatusPath,$intrsrv,$usernm,$admpass,$cmsourcepath -ComputerName localhost -authentication credssp -Credential $PScreds -Verbose
   
 		
     }

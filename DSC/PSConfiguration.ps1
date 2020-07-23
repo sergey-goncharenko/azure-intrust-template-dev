@@ -215,5 +215,17 @@
             Ensure = "Present"
             DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
         }
+        InstallITSSUpdate InstallITSSUpdateTask
+        {
+            CM = "ITSS_U"
+            Adminpass = $admpwd
+			DomainName = $DomainName
+            Credential = $DomainCreds
+			PSName = $PSName
+            INTRName = $INTRName
+			ScriptPath = $PSScriptRoot
+            Ensure = "Present"
+            DependsOn = "[InstallITSS]InstallITSSTask"
+        }
     }
 }
