@@ -7,6 +7,7 @@ DscResourcesToExport = @(
     'InstallADK',
     'InstallAndConfigWSUS',
     'InstallITSS',
+	'InstallITSSUpdate',
     'InstallInTrust',
     'InstallAZCopy',
     'WriteConfigurationFile',
