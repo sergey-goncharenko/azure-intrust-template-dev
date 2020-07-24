@@ -152,7 +152,7 @@
         {
             CM = "CM"
             Ensure = "Present"
-            DependsOn = "[DownloadAndRunETW]DwnldETW"
+            DependsOn = "[WriteConfigurationFile]WriteClientFinished"
         }
 
 #        DownloadAndRunSilkETW DwnldSilk
