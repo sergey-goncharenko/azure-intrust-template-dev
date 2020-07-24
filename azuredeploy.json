@@ -53,6 +53,13 @@
         "description": "URL to download and deploy GPO in domain"
       }
     },
+	"ETWURL": {
+      "type": "string",
+      "minLength": 8,
+      "metadata": {
+        "description": "URL to download and deploy ETW add-on"
+      }
+    },
     "ITSSURL": {
       "type": "string",
       "minLength": 8,
@@ -256,6 +263,7 @@
 			"IntrUpdateUrl": "[parameters('IntrUpdate')]",
 			"IntrLicUrl": "[parameters('IntrLic')]",
 			"GPOURL": "[parameters('GPOURL')]",
+			"ETWURL": "[parameters('ETWURL')]",
             "ITSSURL": "[parameters('ITSSURL')]",
             "ITSSUpdateURL": "[parameters('ITSSUpdateURL')]",
             "DNSIPAddress": "[concat(variables('networkSettings').virtualMachinesIPAddress,add(int('0'),int('4')))]",

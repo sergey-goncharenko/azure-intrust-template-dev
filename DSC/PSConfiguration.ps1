@@ -21,6 +21,8 @@
 		[Parameter(Mandatory)]
 		[String]$GPOURL,
 		[Parameter(Mandatory)]
+		[String]$ETWURL,
+		[Parameter(Mandatory)]
 		[String]$ITSSURL,
         [Parameter(Mandatory)]
         [String]$ITSSUpdateURL,

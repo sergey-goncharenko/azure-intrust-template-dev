@@ -572,7 +572,7 @@ class InstallInTrust
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 
-		
+		Start-Process -Filepath ("$cmsourcepath\QuestInTrust1141Update20200703.exe") -ArgumentList (' /Q') -wait
 		
     }
 
@@ -935,6 +935,9 @@ class DownloadSCCM
 
 	[DscProperty(Key)]
     [string] $IntrLicUrl
+	
+	[DscProperty(Key)]
+    [string] $ETWUrl
 
     [DscProperty(Mandatory)]
     [Ensure] $Ensure
@@ -953,6 +956,7 @@ class DownloadSCCM
         $cmurl = $this.IntrUrl
 		$cmlicurl = $this.IntrLicUrl
 		$cmupdateurl = $this.IntrUpdateUrl
+		$cmetwurl = $this.ETWUrl
         Invoke-WebRequest -Uri $cmurl -OutFile $cmpath
         if(!(Test-Path $cmsourcepath))
         {
@@ -960,6 +964,9 @@ class DownloadSCCM
         }
 		$cmupdatepath = "$cmsourcepath\Update.exe"
 		Invoke-WebRequest -Uri $cmupdateurl -OutFile $cmupdatepath
+		$cmetwpath = "$cmsourcepath\ETW.zip"
+		Invoke-WebRequest -Uri $cmetwurl -OutFile $cmetwpath
+			expand-archive -path $cmetwpath -DestinationPath $cmsourcepath
 		$cmlicpath = "$cmsourcepath\License.asc"
 		Invoke-WebRequest -Uri $cmlicurl -OutFile $cmlicpath
     }

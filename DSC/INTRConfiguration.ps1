@@ -21,6 +21,8 @@
 		[Parameter(Mandatory)]
 		[String]$GPOURL,
 		[Parameter(Mandatory)]
+		[String]$ETWURL,
+		[Parameter(Mandatory)]
 		[String]$ITSSURL,
 		[Parameter(Mandatory)]
         [String]$ITSSUpdateURL,
@@ -69,6 +71,7 @@
 			IntrUrl= $IntrUrl
 			IntrUpdateUrl= $IntrUpdateUrl
 			IntrLicUrl= $IntrLicUrl
+			ETWUrl= $ETWURL
             Ensure = "Present"
             DependsOn = "[SetCustomPagingFile]PagingSettings"
         }
