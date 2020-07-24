@@ -99,7 +99,7 @@
   "variables": {
     "dscScript": "DSC/DCConfiguration.zip",
     "virtualNetworkName": "[concat(toLower(parameters('prefix')), '-vnet')]",
-    "domainName": "contoso.com",
+    "domainName": "questlab.com",
     "networkSettings": {
       "virtualNetworkAddressPrefix": "10.0.0.0/16",
       "subnetAddressPrefix": "10.0.0.0/24",

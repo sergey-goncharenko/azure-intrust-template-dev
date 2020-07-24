@@ -141,12 +141,12 @@
             DependsOn = "[AddUserToLocalAdminGroup]AddADUserToLocalAdminGroup","[AddUserToLocalAdminGroup]AddADComputerToLocalAdminGroup"
         }
 
-        DownloadAndRunETW DwnldETW
-        {
-            CM = "CM"
-            Ensure = "Present"
-            DependsOn = "[WriteConfigurationFile]WriteClientFinished"
-        }
+#        DownloadAndRunETW DwnldETW
+#        {
+#            CM = "CM"
+#            Ensure = "Present"
+#            DependsOn = "[WriteConfigurationFile]WriteClientFinished"
+#        }
 
         DownloadAndRunSysmon DwnldSysmon
         {
