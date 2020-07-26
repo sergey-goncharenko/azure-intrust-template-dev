@@ -474,7 +474,7 @@
       "apiVersion": "2015-06-15",
       "location": "[parameters('location')]",
       "dependsOn": [
-        "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[4]))]", "vmcopy"
+        "[concat('Microsoft.Compute/virtualMachines/',toLower(parameters('prefix')),variables('vmname')[4])]", "vmcopy"
       ],
       "properties": {
         "publisher": "Microsoft.Azure.Extensions",
