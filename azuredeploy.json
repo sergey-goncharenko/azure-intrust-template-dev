@@ -94,8 +94,15 @@
       "metadata": {
         "description": "Location for all resources."
       }
-    }
-  },
+    },
+    "deploymode": {
+      "type": "string",
+      "defaultValue": "full",
+      "metadata": {
+        "description": "Deployment mode(full,nolinux,nowin10,noclients)"
+      }
+    } 
+ },
   "variables": {
     "dscScript": "DSC/DCConfiguration.zip",
     "virtualNetworkName": "[concat(toLower(parameters('prefix')), '-vnet')]",
@@ -419,6 +426,7 @@
       }
     },
     {
+	  "condition": "[if(equals(parameters('deploymode'),'full'),bool('true'),if(equals(parameters('deploymode'),'nowin10'),bool('true'),bool('false')))]",
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2018-06-01",
       "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[4]))]",
