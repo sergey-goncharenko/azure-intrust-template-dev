@@ -344,6 +344,7 @@
       }
     },
     {
+	  "condition": "[if(equals(variables('vmrole')[copyIndex()],'ClientLinux'),if(equals(parameters('deploymode'),'full'),bool('true'),if(equals(parameters('deploymode'),'nowin10'),bool('true'),bool('false'))),bool('true'))]",
       "type": "Microsoft.Network/publicIpAddresses",
       "apiVersion": "2018-08-01",
       "name": "[concat(toLower(parameters('prefix')),toLower(variables('vmname')[copyIndex()]), '-ip')]",
@@ -469,6 +470,7 @@
       }
     },
     {
+	  "condition": "[if(equals(parameters('deploymode'),'full'),bool('true'),if(equals(parameters('deploymode'),'nowin10'),bool('true'),bool('false')))]",
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(concat(toLower(parameters('prefix')),toLower(variables('vmname')[4])),'/configureintrustagent')]",
       "apiVersion": "2015-06-15",
