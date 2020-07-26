@@ -5,6 +5,7 @@ RootModule = 'TemplateHelpDSC.psm1'
 
 DscResourcesToExport = @(
     'InstallADK',
+	'InstallSMTPRelay',
     'InstallAndConfigWSUS',
     'InstallITSS',
 	'InstallITSSUpdate',

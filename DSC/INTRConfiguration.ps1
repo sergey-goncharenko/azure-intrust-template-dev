@@ -30,6 +30,18 @@
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Admincreds
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostAddress,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostPort,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostUserName,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostPassword,
+		[Parameter(Mandatory)]
+		[String]$SMTPMailFrom,
+		[Parameter(Mandatory)]
+		[String]$DefaultOperatorAddress
     )
 
     Import-DscResource -ModuleName TemplateHelpDSC
@@ -63,6 +75,14 @@
             InitialSize = '8192'
             MaximumSize = '8192'
         }
+		
+		InstallSMTPRelay InstallSMTPRelay
+		{
+			SmartHostAddress = $SMTPSmartHostAddress
+			SmartHostPort = $SMTPSmartHostPort
+			SmartHostUserName = $SMTPSmartHostUserName 
+			SmartHostPassword = $SMTPSmartHostPassword
+		} 
 
         DownloadSCCM DownLoadSCCM
         {

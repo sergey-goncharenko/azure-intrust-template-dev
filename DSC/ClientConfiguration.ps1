@@ -30,6 +30,18 @@
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
         [System.Management.Automation.PSCredential]$Admincreds
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostAddress,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostPort,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostUserName,
+		[Parameter(Mandatory)]
+		[String]$SMTPSmartHostPassword,
+		[Parameter(Mandatory)]
+		[String]$SMTPMailFrom,
+		[Parameter(Mandatory)]
+		[String]$DefaultOperatorAddress
     )
     Set-ExecutionPolicy -ExecutionPolicy Bypass -Force
     Import-DscResource -ModuleName TemplateHelpDSC
