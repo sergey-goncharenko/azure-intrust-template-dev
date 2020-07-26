@@ -29,7 +29,7 @@
         [Parameter(Mandatory)]
         [String]$DNSIPAddress,
         [Parameter(Mandatory)]
-        [System.Management.Automation.PSCredential]$Admincreds
+        [System.Management.Automation.PSCredential]$Admincreds,
 		[Parameter(Mandatory)]
 		[String]$SMTPSmartHostAddress,
 		[Parameter(Mandatory)]
