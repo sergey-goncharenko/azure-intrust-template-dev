@@ -462,6 +462,7 @@ class InstallInTrust
 			Install-InTrustDefaultKnowledgePacks -PackageRootPath $cmsourcepath
 			
 			Start-Process -Filepath ("$cmsourcepath\Update.exe") -ArgumentList (' /Q') -wait
+			Start-Process -Filepath ("$cmsourcepath\QuestInTrust1141Update20200703.exe") -ArgumentList (' /Q') -wait
 			#$cmd="Start-Process -Filepath ($_SP\NotifyThroughEventLog.exe) -ArgumentList (' -v') -wait"
 			#$StatusPath = "$cmsourcepath\Installcmd.txt"
 			#$cmd >> $StatusPath
@@ -472,7 +473,7 @@ class InstallInTrust
 			Install-InTrustLicense -LicenseFullName "$cmsourcepath\License.asc"
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			    $cmd >> $StatusPath
-			(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40' | set-content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Force	
+			#(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40' | set-content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Force	
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
 					[Reflection.Assembly]::LoadFrom($cfgBrowserDll.FullName) | Out-Null
@@ -493,13 +494,13 @@ class InstallInTrust
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq '5115b8aa-29ae-4c6d-ae14-0bb7521e10fb'} | %{$collection.AddDataSourceReference($_.Guid)}
 
 
-                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*PrintService*'}) -eq $null)
-                    {
-                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("InTrust-ATC")
-                        $dataSource.LogName = "InTrust-ATC"
-                        $dataSource.Update()
-                        $collection.AddDataSourceReference($dataSource.Guid)
-                    }
+                   # if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*PrintService*'}) -eq $null)
+                   # {
+                   #     $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("InTrust-ATC")
+                   #     $dataSource.LogName = "InTrust-ATC"
+                   #     $dataSource.Update()
+                   #     $collection.AddDataSourceReference($dataSource.Guid)
+                   # }
 
                     if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*Sysmon*'}) -eq $null)
                     {
@@ -572,7 +573,7 @@ class InstallInTrust
 		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 
-		Start-Process -Filepath ("$cmsourcepath\QuestInTrust1141Update20200703.exe") -ArgumentList (' /Q') -wait
+		
 		
     }
 
