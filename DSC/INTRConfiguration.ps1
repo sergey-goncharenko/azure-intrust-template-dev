@@ -203,6 +203,8 @@
 			DomainName = $DomainName
             Credential = $DomainCreds
 			PSName = $PSName
+			MailFromAddress = $SMTPMailFrom
+			DefaultOperatorAddress = $DefaultOperatorAddress
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
             DependsOn = "[xCredSSP]Server"

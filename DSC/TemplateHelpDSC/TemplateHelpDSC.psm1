@@ -499,6 +499,11 @@ class InstallInTrust
     [DscProperty(Mandatory)]
     [System.Management.Automation.PSCredential] $Credential
 
+	[DscProperty(Key)]
+    [string] $MailFromAddress
+
+	[DscProperty(Key)]
+    [string] $DefaultOperatorAddress
 	
 	[DscProperty(Key)]
     [string] $PSName
@@ -520,6 +525,8 @@ class InstallInTrust
 		$PScreds=$this.Credential
 		$admpass=$this.AdminPass
 		$sqlsrv=$this.PSName
+		$emailfrom = $this.MailFromAddress
+		$emailto = $this.DefaultOperatorAddress
 		$instpsmpath="$_SP\Installation.psm1"
 		$instparpsmpath="$_SP\SetInstallationParameters.psm1"
         $cmpath = "c:\$_CM.exe"
@@ -536,7 +543,7 @@ class InstallInTrust
 			
 
 			$cmd="Initialize-EnvironmentVariables -commonPsw $admpass -sqlServer $sqlsrv -sqlReportServer $sqlsrv -serviceAccount $creds"
-			Initialize-EnvironmentVariables -commonPsw $admpass -sqlServer $sqlsrv -sqlReportServer $sqlsrv -serviceAccount $creds
+			Initialize-EnvironmentVariables -commonPsw $admpass -sqlServer $sqlsrv -sqlReportServer $sqlsrv -mailSender $emailfrom -operatorEmail $emailto -serviceAccount $creds
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
             $cmd >> $StatusPath
 		
@@ -565,6 +572,12 @@ class InstallInTrust
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
 			    $cmd >> $StatusPath
 			#(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40' | set-content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Force	
+			
+			# Changing org parameters
+			$PDOImportTool = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter "InTrustPDOImport.exe" -Recurse
+			$OrgParamsPath = "$_SP\ITConfiguration\Server\"
+			Get-ChildItem -Path $OrgParamsPath | ForEach-Object { Start-Process -File $PDOImportTool.FullName -ArgumentList ('-import ' + $_.FullName ) -Wait -NoNewWindow }
+
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
 					[Reflection.Assembly]::LoadFrom($cfgBrowserDll.FullName) | Out-Null
@@ -585,13 +598,13 @@ class InstallInTrust
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq '5115b8aa-29ae-4c6d-ae14-0bb7521e10fb'} | %{$collection.AddDataSourceReference($_.Guid)}
 
 
-                   # if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*PrintService*'}) -eq $null)
-                   # {
-                   #     $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("InTrust-ATC")
-                   #     $dataSource.LogName = "InTrust-ATC"
-                   #     $dataSource.Update()
-                   #     $collection.AddDataSourceReference($dataSource.Guid)
-                   # }
+#                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*ETW*'}) -eq $null)
+#                    {
+#                        $dataSource = $cfgBrowser.Configuration.DataSources.AddWinEvtDataSource("InTrust-ATC")
+#                        $dataSource.LogName = "InTrust-ATC"
+#                        $dataSource.Update()
+#                        $collection.AddDataSourceReference($dataSource.Guid)
+#                    }
 
                     if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*Sysmon*'}) -eq $null)
                     {
