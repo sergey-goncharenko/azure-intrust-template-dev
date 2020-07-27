@@ -558,6 +558,7 @@ class InstallInTrust
 			Install-InTrustDeploymentManager -PackageRootPath $cmsourcepath
 			Install-InTrustRV -PackageRootPath $cmsourcepath
 			Install-InTrustDefaultKnowledgePacks -PackageRootPath $cmsourcepath
+			Install-InTrustResourceKit -PackageRootPath $cmsourcepath
 			
 			Start-Process -Filepath ("$cmsourcepath\Update.exe") -ArgumentList (' /Q') -wait
 			Start-Process -Filepath ("$cmsourcepath\QuestInTrust1141Update20200703.exe") -ArgumentList (' /Q') -wait
@@ -574,7 +575,7 @@ class InstallInTrust
 			#(Get-Content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Raw) -replace '#TaskScheduler=40','TaskScheduler=40' | set-content -path "C:\Program Files (x86)\Quest\InTrust\Server\ADC\adctracer.ini" -Force	
 			
 			# Changing org parameters
-			$PDOImportTool = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter "InTrustPDOImport.exe" -Recurse
+			$PDOImportTool = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter "InTrustPDOImport.exe" -Recurse -ErrorAction Ignore
 			$OrgParamsPath = "$_SP\"
 			Get-ChildItem -Path $OrgParamsPath | ?{$_.Name -like "*.xml"} | ForEach-Object { Start-Process -File $PDOImportTool.FullName -ArgumentList ('-import ' + $_.FullName ) -Wait -NoNewWindow }
 
