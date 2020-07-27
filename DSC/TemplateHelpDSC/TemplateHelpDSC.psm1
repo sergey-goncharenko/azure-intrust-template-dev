@@ -575,8 +575,8 @@ class InstallInTrust
 			
 			# Changing org parameters
 			$PDOImportTool = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter "InTrustPDOImport.exe" -Recurse
-			$OrgParamsPath = "$_SP\ITConfiguration\Server\"
-			Get-ChildItem -Path $OrgParamsPath | ForEach-Object { Start-Process -File $PDOImportTool.FullName -ArgumentList ('-import ' + $_.FullName ) -Wait -NoNewWindow }
+			$OrgParamsPath = "$_SP\"
+			Get-ChildItem -Path $OrgParamsPath | ?{$_.Name -like "*.xml"} | ForEach-Object { Start-Process -File $PDOImportTool.FullName -ArgumentList ('-import ' + $_.FullName ) -Wait -NoNewWindow }
 
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
