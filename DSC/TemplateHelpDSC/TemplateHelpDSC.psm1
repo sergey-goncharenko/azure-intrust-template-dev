@@ -534,7 +534,7 @@ class InstallInTrust
 		$creds=$usernm
 
 		$output = Invoke-Command -ScriptBlock { 
-			param($instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP)
+			param($instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP,$emailfrom,$emailto)
 			$StatusPath = "$cmsourcepath\Installcmd.txt"
             "Started..." >> $StatusPath
 			Import-Module $instpsmpath
@@ -577,7 +577,7 @@ class InstallInTrust
 			# Changing org parameters
 			$PDOImportTool = Get-ChildItem -Path ${env:ProgramFiles(x86)} -Filter "InTrustPDOImport.exe" -Recurse -ErrorAction Ignore
 			$OrgParamsPath = "$_SP\"
-			Get-ChildItem -Path $OrgParamsPath | ?{$_.Name -like "*.xml"} | ForEach-Object { Start-Process -File $PDOImportTool.FullName -ArgumentList ('-import ' + $_.FullName ) -Wait -NoNewWindow }
+			Get-ChildItem -Path $OrgParamsPath | ?{$_.Name -like "*.xml"} | ForEach-Object { Start-Process -File $PDOImportTool.FullName -ArgumentList (' -import "' + $_.FullName +'"') -Wait -NoNewWindow }
 
 					$cfgBrowserDll = gci ${env:ProgramFiles(x86)} -Filter Quest.InTrust.ConfigurationBrowser.dll -Recurse -ErrorAction Ignore
 
@@ -597,7 +597,7 @@ class InstallInTrust
 					$rtcSite.Update()
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq 'a9e5c7a2-5c01-41b7-9d36-e562dfddefa9' -and $_.Name -notlike "*Change Auditor*" -and $_.Name -notlike "*Active Roles*"} | %{$collection.AddDataSourceReference($_.Guid)}
 					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.ProviderID -eq '5115b8aa-29ae-4c6d-ae14-0bb7521e10fb'} | %{$collection.AddDataSourceReference($_.Guid)}
-
+					$cfgBrowser.Configuration.DataSources.ListDataSources() | ?{$_.Name -eq 'Detection Lab Microsoft ETW Log'} | %{$collection.AddDataSourceReference($_.Guid)}
 
 #                    if(($cfgBrowser.Configuration.DataSources.ListDataSources()|?{$_.LogName -like '*ETW*'}) -eq $null)
 #                    {
@@ -675,7 +675,7 @@ class InstallInTrust
 					List-Rules -Group $rulegroup2 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
                     List-Rules -Group $rulegroup3 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
                     List-Rules -Group $rulegroup4 | %{Enable-Rule -RuleName $_.Name -Yes -NoEventsSQL}
-		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
+		} -ArgumentList $instpsmpath,$instparpsmpath,$admpass,$sqlsrv,$creds,$cmsourcepath,$_SP,$emailfrom,$emailto -ComputerName localhost -authentication credssp -Credential $PScreds -ConfigurationName microsoft.powershell32 -Verbose
         Write-output $output
 
 		
