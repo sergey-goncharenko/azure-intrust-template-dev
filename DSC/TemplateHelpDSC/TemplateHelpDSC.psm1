@@ -783,6 +783,11 @@ class WriteConfigurationFile
                     StartTime = ''
                     EndTime = ''
                 }
+				xCredSSPClient = @{
+                    Status = 'NotStart'
+                    StartTime = ''
+                    EndTime = ''
+                }
                 ClientFinished = @{
                     Status = 'NotStart'
                     StartTime = ''
