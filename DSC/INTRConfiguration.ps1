@@ -204,6 +204,16 @@
             DependsOn = "[xCredSSP]Server"
         }
 		
+		WaitForConfigurationFile xCredSSPClient
+        {
+            Role = "PS"
+            MachineName = $PSName
+            LogFolder = $LogFolder
+            ReadNode = "xCredSSPClient"
+            Ensure = "Present"
+            DependsOn = "[xCredSSP]Server"
+        }
+		
 		InstallInTrust InstallInTrustTask
         {
             CM = $CM

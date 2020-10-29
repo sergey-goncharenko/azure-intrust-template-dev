@@ -201,12 +201,21 @@
 			DependsOn = "[xCredSSP]Server"
         }
 
-        RegisterTaskScheduler InstallAndUpdateSCCM
+ #       RegisterTaskScheduler InstallAndUpdateSCCM
+ #       {
+ #           TaskName = "ScriptWorkFlow"
+ #           ScriptName = "ScriptWorkFlow.ps1"
+ #           ScriptPath = $PSScriptRoot
+ #           ScriptArgument = "$DomainName $CM $DName\$($Admincreds.UserName) $INTRName $ClientName"
+ #           Ensure = "Present"
+ #           DependsOn = "[xCredSSP]Client"
+ #       }
+        WriteConfigurationFile xCredSSPClient
         {
-            TaskName = "ScriptWorkFlow"
-            ScriptName = "ScriptWorkFlow.ps1"
-            ScriptPath = $PSScriptRoot
-            ScriptArgument = "$DomainName $CM $DName\$($Admincreds.UserName) $INTRName $ClientName"
+            Role = "PS"
+            LogPath = $LogPath
+            WriteNode = "xCredSSPClient"
+            Status = "Passed"
             Ensure = "Present"
             DependsOn = "[xCredSSP]Client"
         }
