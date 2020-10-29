@@ -223,7 +223,7 @@
             Name   = "Agent"
             Path = "C:\IntrFull\Agent"
             Account = "Everyone"
-            DependsOn = "InstallInTrust]InstallInTrustTask"
+            DependsOn = "[InstallInTrust]InstallInTrustTask"
         }
 		
 #		RegisterTaskScheduler InstallAndUpdateSCCM
