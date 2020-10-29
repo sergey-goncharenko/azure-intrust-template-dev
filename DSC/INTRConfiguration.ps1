@@ -196,6 +196,14 @@
 			DependsOn = "[JoinDomain]JoinDomain"
         }
 		
+
+        DownloadAndRunSysmon DwnldSysmon
+        {
+            CM = "CM"
+            Ensure = "Present"
+            DependsOn = "[xCredSSP]Server"
+        }
+		
 		InstallInTrust InstallInTrustTask
         {
             CM = $CM
@@ -207,14 +215,7 @@
 			DefaultOperatorAddress = $DefaultOperatorAddress
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
-            DependsOn = "[xCredSSP]Server"
-        }
-
-        DownloadAndRunSysmon DwnldSysmon
-        {
-            CM = "CM"
-            Ensure = "Present"
-            DependsOn = "[InstallInTrust]InstallInTrustTask"
+            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
         }
 
         FileReadAccessShare IntrustSMBShare
@@ -222,7 +223,7 @@
             Name   = "Agent"
             Path = "C:\IntrFull\Agent"
             Account = "Everyone"
-            DependsOn = "[DownloadSCCM]DownLoadSCCM"
+            DependsOn = "InstallInTrust]InstallInTrustTask"
         }
 		
 #		RegisterTaskScheduler InstallAndUpdateSCCM
