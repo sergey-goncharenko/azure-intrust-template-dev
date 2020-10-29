@@ -560,8 +560,8 @@ class InstallInTrust
 			Install-InTrustDefaultKnowledgePacks -PackageRootPath $cmsourcepath
 			Install-InTrustResourceKit -PackageRootPath $cmsourcepath
 			
-			Start-Process -Filepath ("$cmsourcepath\Update.exe") -ArgumentList (' /Q') -wait
-			Start-Process -Filepath ("$cmsourcepath\QuestInTrust1141Update20200703.exe") -ArgumentList (' /Q') -wait
+			#Start-Process -Filepath ("$cmsourcepath\Update.exe") -ArgumentList (' /Q') -wait
+			#Start-Process -Filepath ("$cmsourcepath\QuestInTrust1141Update20200703.exe") -ArgumentList (' /Q') -wait
 			#$cmd="Start-Process -Filepath ($_SP\NotifyThroughEventLog.exe) -ArgumentList (' -v') -wait"
 			#$StatusPath = "$cmsourcepath\Installcmd.txt"
 			#$cmd >> $StatusPath
