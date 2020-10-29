@@ -227,7 +227,7 @@
             INTRName = $INTRName
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
-            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
+            DependsOn = "[xCredSSP]Client"
         }
         InstallITSSUpdate InstallITSSUpdateTask
         {

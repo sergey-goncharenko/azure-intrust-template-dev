@@ -1226,15 +1226,15 @@ class DownloadAndRunSysmon
     [void] Set()
     {
         $cmurl = "https://live.sysinternals.com/Sysmon64.exe"
-        Invoke-WebRequest -Uri $cmurl -OutFile "c:\Sysmon64.exe"
+        Invoke-WebRequest -Uri $cmurl -OutFile "c:\windows\temp\Sysmon64.exe"
         #Expand-Archive -LiteralPath "c:\ETWReader.zip" -DestinationPath "c:\"
-        Start-Process -Filepath ("c:\Sysmon64.exe") -ArgumentList ('-accepteula -i -n')
+        Start-Process -Filepath ("c:\windows\temp\Sysmon64.exe") -ArgumentList ('-accepteula -i -n')
     }
 
     [bool] Test()
     {
 
-        if(!(Test-Path "c:\Sysmon64.exe"))
+        if(!(Test-Path "c:\windows\temp\Sysmon64.exe"))
         {
             return $false
         }
