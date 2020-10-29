@@ -370,7 +370,7 @@ function Install-InTrustDefaultKnowledgePacks
         [string]
         $RelativePath = "InTrust\Server"
     )
-    
+    Install-InTrustKnowledgePacks -PackageRootPath $PackageRootPath -RelativePath $RelativePath -WildcardPackName "Linux" 
     Install-InTrustKnowledgePacks -PackageRootPath $PackageRootPath -RelativePath $RelativePath -WildcardPackName "KP" 
     Install-InTrustKnowledgePacks -PackageRootPath $PackageRootPath -RelativePath $RelativePath -WildcardPackName "KM" 
     Install-InTrustKnowledgePacks -PackageRootPath $PackageRootPath -RelativePath $RelativePath -WildcardPackName "KnowledgePack"  
