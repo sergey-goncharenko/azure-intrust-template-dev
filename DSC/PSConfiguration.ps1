@@ -150,7 +150,7 @@
         {
             Name   = $LogFolder
             Path =  $LogPath
-            Account = $DCComputerAccount
+            Account = $DCComputerAccount,$INTRComputerAccount
             DependsOn = "[File]ShareFolder"
         }
         
@@ -219,12 +219,12 @@
             Ensure = "Present"
             DependsOn = "[xCredSSP]Client"
         }
-        DownloadAndRunSysmon DwnldSysmon
-        {
-            CM = "CM"
-            Ensure = "Present"
-            DependsOn = "[xCredSSP]Client"
-        }
+ #       DownloadAndRunSysmon DwnldSysmon
+ #       {
+ #           CM = "CM"
+ #           Ensure = "Present"
+ #           DependsOn = "[xCredSSP]Client"
+  #      }
 
         InstallITSS InstallITSSTask
         {

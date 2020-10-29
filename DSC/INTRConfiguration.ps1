@@ -225,7 +225,7 @@
 			DefaultOperatorAddress = $DefaultOperatorAddress
 			ScriptPath = $PSScriptRoot
             Ensure = "Present"
-            DependsOn = "[DownloadAndRunSysmon]DwnldSysmon"
+            DependsOn = "[WaitForConfigurationFile]xCredSSPClient"
         }
 
         FileReadAccessShare IntrustSMBShare
